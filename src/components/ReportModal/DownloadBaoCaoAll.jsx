@@ -1,0 +1,384 @@
+import React, { useState } from 'react';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
+import api from '@/config';
+import formularjson from '/src/utils/formular.json';
+import khjson from '/src/utils/kh.json';
+import CKNNjson from '/src/utils/CKNN.json';
+import khweek from '/src/utils/khWEEK.json';
+import CKNNweek from '/src/utils/CKNNWEEK.json';
+import formularweek from '/src/utils/formularweek.json';
+const getExcelAlpha = (n) => {
+    let result = '';
+    while (n > 0) {
+        const mod = (n - 1) % 26;
+        result = String.fromCharCode(65 + mod) + result;
+        n = Math.floor((n - mod) / 26);
+    }
+    return result;
+};
+
+const replaceColumnLetter = (formula, fromCol, toCol) => {
+    const regex = new RegExp(`\\b${fromCol}(\\d+)`, 'g');
+    return formula.replace(regex, `${toCol}$1`);
+};
+const setBorderForRange = (sheet, startRow, endRow, startCol, endCol) => {
+    for (let row = startRow; row <= endRow; row++) {
+        for (let col = startCol; col <= endCol; col++) {
+            const cell = sheet.getCell(row, col);
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' },
+            };
+        }
+    }
+};
+// const setMergeCell = (sheet, startRow, endRow, startCol, endCol) => {
+//     for (let row = startRow; row <= endRow; row++) {
+//         for (let col = startCol; col <= endCol; col++) {
+//
+//             sheet.mergeCells(`${colStart}5:${colStart}6`);
+//         }
+//     }
+// };
+const colorbackgroundexcel=(worksheet, startRow, endRow, startCol, endCol) => {
+    for (let row = startRow; row <= endRow; row++) {
+        for (let col = startCol; col <= endCol; col++) { // A=1, Z=26
+            const cell = worksheet.getCell(row, col);
+            // cell.fill = {
+            //     type: 'pattern',
+            //     pattern: 'solid',
+            //     fgColor: { argb: rgbToARGB(218,238,243) } // xám nhạt = giả lập bị khóa
+            // };
+            cell.font ={
+                name: 'Times New Roman',
+                size: 12,
+            }
+        }
+    }
+}
+const aligRightForRange = (sheet, startRow, endRow, startCol, endCol) => {
+    for (let row = startRow; row <= endRow; row++) {
+        for (let col = startCol; col <= endCol; col++) {
+            sheet.getCell(row, col).alignment = {
+                horizontal: 'right',
+                vertical: 'middle',
+                wrapText: true
+            };
+        }
+    }
+};
+const aligLeftForRange = (sheet, startRow, endRow, startCol, endCol) => {
+    for (let row = startRow; row <= endRow; row++) {
+        for (let col = startCol; col <= endCol; col++) {
+            sheet.getCell(row, col).alignment = {
+                horizontal: 'left',
+                vertical: 'middle',
+                wrapText: true
+            };
+        }
+    }
+};
+const evaluateRelativeFormula = (formula, number) => {
+    return formula.replace(/([A-Z]+)(\d+)/g, (match, col, row) => {
+        const newRow = parseInt(row, 10) + number;
+        return `${col}${newRow}`;
+    });
+};
+const setColumnWidthsInRange = (sheet, startCol, endCol, width) => {
+    for (let col = startCol; col <= endCol; col++) {
+        sheet.getColumn(col).width = width;
+    }
+};
+
+const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
+    // const [tableData, setTableData] = useState([]);
+
+    // Fetch data from API and export to Excel
+    const exportToExcelFile = async () => {
+        try {
+            const response = await api.post('/chitieu/dulieuxuatbaocao', {
+                year,
+                month,
+                quarter,
+                week,
+                loaibaocao_id:loaibaocaoId,
+                number,
+            });
+            console.log(  year,
+                month,
+                quarter,
+                week,
+                loaibaocaoId,
+                number)
+            let namefile="";
+            const tables = [];
+            const rawData = response.data.data;
+            let currentXaNames = null;
+            let currentGroup = [];
+
+            // Group data based on 'xa' names
+            for (const chitieu of rawData) {
+                const xaNames = chitieu.xa.map((x) => x.ten_xa).join(',');
+                if (xaNames !== currentXaNames) {
+                    if (currentGroup.length > 0) tables.push(currentGroup);
+                    currentGroup = [];
+                    currentXaNames = xaNames;
+                }
+                currentGroup.push(chitieu);
+            }
+            if (currentGroup.length > 0) tables.push(currentGroup);
+
+            // Prepare data for export
+            const preparedData = tables.map((group, idx) => {
+                const xaList = group[0].xa.map((x) => x.ten_xa);
+                const data = [];
+                const headerRow01 = [];
+                let headerRow02 = [""];
+                let headerRow03 = [];
+                let headerRow04 = [];
+                let headerRow05 = [];
+                let headerRow06=[];
+                if( loaibaocaoId === 1 )
+                {
+                    namefile=[`(Tuần ${week}-${month}-${year})`];
+                    headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP TUẦN ${week}`, '', '']
+                }else if(loaibaocaoId=== 2){
+                    if(month===3)
+                    {
+                        namefile=[`(Quý 1-${year})`];
+                        headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP QUÝ 1`, '', ''];
+                    }else if(month===6){
+                        namefile=[`(6 Tháng-${year})`];
+                        headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP 6 THÁNG`, '', ''];
+                    }else if(month===9){
+                        namefile=[`(9 Tháng-${year})`];
+                        headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP 9 THÁNG`, '', ''];
+                    }else {
+                        namefile=[`(Tháng ${month}-${year})`];
+                        headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP THÁNG ${month}`, '', ''];
+                    }
+                }else if(loaibaocaoId=== 3){
+                    if(quarter===1)
+                    {
+                        headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP QUÝ ${number}`, '', '']
+                        namefile=[`(Quý ${quarter}-${year})`];
+                    }else if(quarter===2){
+                        namefile=[`(6 tháng-${year})`];
+                        headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP 6 THÁNG`, '', '']
+                    }else if(quarter===3){
+                        namefile=[`(9 tháng-${year})`];
+                        headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP 9 THÁNG`, '', '']
+                    }else {
+                        namefile=[`(Quý ${quarter}-${year})`];
+                        headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP QUÝ ${quarter} NĂM ${year}`, '', '']
+                    }
+                }else if(loaibaocaoId=== 4){
+                    headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP LẦN ${number} NĂM ${year}`, '', '']
+                    namefile= [`(Lần ${number}-${year})`];
+                }
+                let numbercol
+
+                if(loaibaocaoId===1)
+                {   numbercol = 10;
+                    headerRow04=[1, 2, 3, 4, 5, 6, 7, 8, 9];
+                    headerRow05=['STT', 'Tên chỉ tiêu', 'Đơn vị', 'Lũy kế cùng kỳ năm trước', 'Năm báo cáo', '', '', 'So sánh (%)', ''];
+                     headerRow06 = ['', '', '', '', 'Kế hoạch', 'Thực hiện trong tuần', 'Lũy kế năm báo cáo', 'KH', 'CKNN'];
+                }else if(loaibaocaoId===2){
+                    numbercol = 10;
+                    headerRow04=[1, 2, 3, 4, 5, 6, 7, 8, 9];
+                    headerRow05=['STT', 'Tên chỉ tiêu', 'Đơn vị', 'Lũy kế cùng kỳ năm trước', 'Năm báo cáo', '', '', 'So sánh (%)', ''];
+                     headerRow06 = ['', '', '', '', 'Kế hoạch', 'Thực hiện trong tháng', 'Lũy kế năm báo cáo', 'KH', 'CKNN'];
+                }else if(loaibaocaoId>2){
+                    numbercol = 9;
+                    // console.log("hello");
+                    headerRow04=[1, 2, 3, 4, 5, 6, 7, 8];
+                    headerRow05=['STT', 'Tên chỉ tiêu', 'Đơn vị', 'Lũy kế cùng kỳ năm trước', 'Năm báo cáo', '', 'So sánh (%)', ''];
+                     headerRow06 = ['', '', '', '', 'Kế hoạch',  'Lũy kế năm báo cáo', 'KH', 'CKNN'];
+                }
+                xaList.forEach((xa) => {
+                    headerRow01.push('');
+                    headerRow02.push('');
+                    headerRow03.push('');
+                    headerRow04.push(numbercol++);
+                    headerRow05.push(xa);
+                    headerRow06.push('');
+                });
+
+                data.push(headerRow01, headerRow02, headerRow03, headerRow04, headerRow05, headerRow06);
+                if(loaibaocaoId===1)
+                {
+                    group.forEach((ct, index) => {
+                        const row = [
+                            ct.ma_chitieu,
+                            ct.ten_chitieu,
+                         (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
+                            formularweek[index] && formularweek[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index ].formula,6), "E", getExcelAlpha(4))} ` : ct.total_value1 === 0 ? null : ct.total_value1,
+                            formularweek[index ] && formularweek[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index ].formula,6), "E", getExcelAlpha(5))} ` :  ct.kehoach === 0 ? null : ct.kehoach,
+                            formularweek[index ] && formularweek[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index ].formula,6), "E", getExcelAlpha(6))} ` : ct.total_value2 === 0 ? null : ct.total_value2,
+                            formularweek[index ] && formularweek[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,6), "E", getExcelAlpha(7))} ` : ct.total_value3 === 0 ? null : ct.total_value3,
+                            khweek[index] && khweek[index ].formula ? evaluateRelativeFormula(khweek[index ].formula ,6): null,
+                            CKNNweek[index ] && CKNNweek[index ].formula ? evaluateRelativeFormula(CKNNweek[index ].formula ,6): null,
+                        ];
+
+                        ct.xa.forEach((x, xaIndex) => {
+                            row.push(formularweek[index] && formularweek[index].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,6), "E", getExcelAlpha(xaIndex + 10))} ` : x.value3.giatri === 0 ? null : x.value3.giatri);
+                        });
+
+                        data.push(row);
+                    });
+                }else if(loaibaocaoId<3){
+                    group.forEach((ct, index) => {
+                        const row = [
+                            ct.ma_chitieu,
+                            ct.ten_chitieu,
+                             (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
+                            formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index ].formula,6), "E", getExcelAlpha(4))} ` : ct.total_value1 === 0 ? null : ct.total_value1,
+                            formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index ].formula,6), "E", getExcelAlpha(5))} ` :  ct.kehoach === 0 ? null : ct.kehoach,
+                            formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index ].formula,6), "E", getExcelAlpha(6))} ` : ct.total_value2 === 0 ? null : ct.total_value2,
+                            formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index ].formula,6), "E", getExcelAlpha(7))} ` : ct.total_value3 === 0 ? null : ct.total_value3,
+                            khjson[index ] && khjson[index ].formula ? evaluateRelativeFormula(khjson[index ].formula,6 ): null,
+                            CKNNjson[index ] && CKNNjson[index ].formula ? evaluateRelativeFormula(CKNNjson[index ].formula,6) : null,
+                        ];
+                        // evaluateRelativeFormula()
+                        ct.xa.forEach((x, xaIndex) => {
+                            row.push(formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index ].formula,6), "E", getExcelAlpha(xaIndex + 10))} ` : x.value3.giatri === 0 ? null : x.value3.giatri);
+                        });
+
+                        data.push(row);
+                    });
+                }else if(loaibaocaoId>2){
+                    group.forEach((ct, index) => {
+                        const row = [
+                            ct.ma_chitieu,
+                            ct.ten_chitieu,
+                             (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
+                            formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index ].formula,6), "E", getExcelAlpha(4))} ` : ct.total_value1 === 0 ? null : ct.total_value1,
+                            formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index ].formula,6), "E", getExcelAlpha(5))} ` :  ct.kehoach === 0 ? null : ct.kehoach,
+                            formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index ].formula,6), "E", getExcelAlpha(6))} ` : ct.total_value3 === 0 ? null : ct.total_value3,
+                            khjson[index ] && khjson[index ].formula ? evaluateRelativeFormula(replaceColumnLetter(khjson[index ].formula,"G","F"),6): null,
+                            CKNNjson[index ] && CKNNjson[index ].formula ? evaluateRelativeFormula(replaceColumnLetter(CKNNjson[index ].formula,"G","F"),6): null,
+                        ];
+                        ct.xa.forEach((x, xaIndex) => {
+                            console.log(x.value3.giatri);
+                            row.push(formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,6), "E", getExcelAlpha(xaIndex + 9))} ` : x.value3.giatri === 0 ? null : x.value3.giatri);
+                        });
+                        data.push(row);
+                    });
+                }
+                // Process each "chitieu" and add rows
+                return data;
+            });
+            // setTableData(preparedData);  // Update tableData with the prepared data
+
+            // Now that the data is ready, export it to Excel
+            if (!preparedData || preparedData.length === 0 || !preparedData[0]) {
+                console.error("Table data is not available.");
+                return;
+            }
+
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('Sheet 1');
+            console.log(rawData);
+            // console.log(preparedData[0]);
+            // Iterate through the data and set the formulas for specific cells
+            preparedData[0].forEach((row, rowIndex) => {
+                row.forEach((cell, colIndex) => {
+                    const excelCell = worksheet.getCell(rowIndex + 1, colIndex + 1);  // Get the specific cell
+
+                    // Check if the cell is a formula (starts with '='), assign it to .formula property
+                    if (typeof cell === 'string' && cell.startsWith('=')) {
+                        // console.log(excelCell.formula);
+                        excelCell.value={ formula: cell};
+                        // excelCell.formula = cell; // Set formula directly if it's a valid formula string
+                    } else if (typeof cell !== 'object') {
+                        // If the cell is not an object (i.e., a normal value), assign the value
+                        excelCell.value = cell;  // Otherwise, set the regular value
+                    }
+                    if(rowIndex>5 && colIndex>8)
+                    {
+                        if(rawData[rowIndex-6]?.is_active&&rawData[rowIndex-6]?.xa[colIndex-9]?.value2?.cothaydoi) {
+                            // console.log(rawData[rowIndex-6]?.xa[colIndex-9]?.value2.giatri, colIndex+1,rowIndex+1);
+                            excelCell.font = {
+                                color: { argb: 'FFFF0000' },
+                                // chữ đỏ
+                                // bold: true
+                            };
+                        }
+                    }
+
+                });
+            });
+            // console.log(preparedData[0].length);
+            worksheet.columns.forEach((column) => {
+                column.alignment = {
+                    vertical: 'middle',
+                    horizontal: 'center',
+                    wrapText: true,
+                };
+                column.width = 15;
+            });
+            // merger rows
+            worksheet.mergeCells(`${getExcelAlpha(1)}5:${getExcelAlpha(1)}6`);
+            worksheet.mergeCells(`${getExcelAlpha(2)}5:${getExcelAlpha(2)}6`);
+            worksheet.mergeCells(`${getExcelAlpha(3)}5:${getExcelAlpha(3)}6`);
+            worksheet.mergeCells(`${getExcelAlpha(4)}5:${getExcelAlpha(4)}6`);
+            worksheet.mergeCells(`${getExcelAlpha(1)}2:${getExcelAlpha(9)}2`);
+            // worksheet.mergeCells(`${getExcelAlpha(1)}3:${getExcelAlpha(111)}3`);
+            if(loaibaocaoId===1){
+                for (let i = 0; i < 102; i++) {
+                    const colStart = getExcelAlpha(i+10);
+                    worksheet.mergeCells(`${colStart}5:${colStart}6`);
+                }
+                worksheet.mergeCells(`${getExcelAlpha(5)}5:${getExcelAlpha(7)}5`);
+                worksheet.mergeCells(`${getExcelAlpha(8)}5:${getExcelAlpha(9)}5`);
+                setBorderForRange(worksheet, 4, preparedData[0].length, 1, 111);
+            }else if(loaibaocaoId<3)
+            {
+                for (let i = 0; i < 102; i++) {
+                    const colStart = getExcelAlpha(i+10);
+                    worksheet.mergeCells(`${colStart}5:${colStart}6`);
+                }
+                worksheet.mergeCells(`${getExcelAlpha(5)}5:${getExcelAlpha(7)}5`);
+                worksheet.mergeCells(`${getExcelAlpha(8)}5:${getExcelAlpha(9)}5`);
+                setBorderForRange(worksheet, 4, preparedData[0].length, 1, 111);
+            }else{
+                for (let i = 0; i < 102; i++) {
+                    const colStart = getExcelAlpha(i+9);
+                    worksheet.mergeCells(`${colStart}5:${colStart}6`);
+                }
+                worksheet.mergeCells(`${getExcelAlpha(5)}5:${getExcelAlpha(6)}5`);
+                worksheet.mergeCells(`${getExcelAlpha(7)}5:${getExcelAlpha(8)}5`);
+                setBorderForRange(worksheet, 4, preparedData[0].length, 1, 110);
+            }
+            aligRightForRange(worksheet,7,preparedData[0].length,4,111);
+            aligLeftForRange(worksheet,7,preparedData[0].length,2,2);
+            aligRightForRange(worksheet,7,preparedData[0].length,1,1);
+            setColumnWidthsInRange(worksheet, 1,1,5);
+            setColumnWidthsInRange(worksheet, 3,3,6);
+            setColumnWidthsInRange(worksheet, 2,2,18);
+            setColumnWidthsInRange(worksheet, 4,111,10);
+            colorbackgroundexcel(worksheet,1,300,1,111)
+            // Save the file as a blob and prompt download
+            const buffer = await workbook.xlsx.writeBuffer();
+            saveAs(new Blob([buffer]), "Báo Cáo tổng "+namefile+'.xlsx');
+        } catch (error) {
+            console.error("Error fetching data for report:", error);
+        }
+    };
+
+    return (
+        <div>
+            <button
+                onClick={exportToExcelFile}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4"
+            >
+                Tải file Báo cáo
+            </button>
+        </div>
+    );
+};
+
+export default MainPage;
