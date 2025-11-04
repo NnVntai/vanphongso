@@ -2,7 +2,7 @@
 import api from "@/config";
 // WizardWithStepper.jsx
 import React, {useEffect, useState} from "react";
-import ShowDate from "../../components/Notification/ShowDateTest.jsx";
+import ShowDate from "../../components/Notification/ShowDeadline.jsx";
 
 import {
     Box,

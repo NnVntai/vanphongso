@@ -78,8 +78,6 @@ export default function ReportAdmin() {
         setLoadingReports(true);
         try {
             const params = {};
-
-
             if (!reset) {
                 if (selectedFileType) params.id_loaibaocao = selectedFileType;
                 if (week) params.week_report = week;
@@ -90,7 +88,6 @@ export default function ReportAdmin() {
                 if (year) params.year_report = year;
                 if (numberYear) params.number_report = numberYear;
             }
-
             const { data } = await api.get("/reports/filter", { params });
             // Sort by updated_at (mới nhất trước)
             const sorted = [...data].sort(
@@ -105,7 +102,6 @@ export default function ReportAdmin() {
             setLoadingReports(false);
         }
     };
-
     /* -------------------- Effects -------------------- */
     useEffect(() => {
         fetchFileTypes();
@@ -134,12 +130,10 @@ export default function ReportAdmin() {
                 { filename },
                 { responseType: "blob" } // 👈 quan trọng: trả về dạng blob
             );
-
             // response.data lúc này là blob
             const blob = new Blob([response.data], {
                 type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             });
-
             // Tạo URL tạm để tải file
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
@@ -147,7 +141,6 @@ export default function ReportAdmin() {
             a.download = filename || "mau.xlsx";
             document.body.appendChild(a);
             a.click();
-
             // Dọn dẹp
             a.remove();
             window.URL.revokeObjectURL(url);
@@ -163,7 +156,6 @@ export default function ReportAdmin() {
                 <Typography variant="h5" className="font-bold mb-4">
                     Danh sách báo cáo
                 </Typography>
-
                 {/* ----------------- Bộ lọc ----------------- */}
                 <Box mb={3} className="bg-white rounded-2xl shadow p-4">
                     <Grid container spacing={2} alignItems="flex-end">

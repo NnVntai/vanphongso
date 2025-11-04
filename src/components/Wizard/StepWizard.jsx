@@ -45,7 +45,6 @@ export default function WizardWithStepper({  selectedReports
             // gọi hàm nộp báo cáo ở Step 3 (index 2)
             checkClickSend()
         }else if (activeStep === 4) {
-
             handleSubmitReportPDF();
         }else {
             setActiveStep(prev => prev + 1);
