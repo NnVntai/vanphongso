@@ -22,13 +22,11 @@ const getExcelAlpha = (n) => {
     }
     return result;
 };
+
 const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month,templatePath,outputFileName,apiEndpoint
                          }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-    const EditABC=[
-
-    ]
     const EDITABLE_RANGES=allowSheet;
     const EDITABLE_RANGESWEEK=allowSheetWeek;
     const rgbToARGB = (r, g, b, a = 255) => {
@@ -106,7 +104,6 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
             });
             return;
         }
-
         if (idLoai === 3 || idLoai === 4) {
             processAndDownloadExcelYearQuaterly();
         } else {
@@ -225,7 +222,6 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                 currentGroup.push(chitieu);
             }
             if (currentGroup.length > 0) tables.push(currentGroup);
-
             const preparedData = tables.map((group, idx) => {
                 // const xaList = group[0].xa.map((x) => x.ten_xa);
                 const data = [];
@@ -255,7 +251,6 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                         headerRow07= ['STT','Chỉ tiêu','DVT', 'Năm trước','','Năm báo cáo','','',`Q${quarter}${year}${username.id}`];
                         loaibaocaotext=`(6 tháng-${year})`;
                     }else if(quarter===3){
-
                         headerRow05=[`ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP QUÝ III VÀ 09 THÁNG` ];
                         headerRow08=['','','','Quý II','TH 09 Tháng','Kế hoạch','Ước TH Quý','Ước TH 09 Tháng'];
                         headerRow07= ['STT','Chỉ tiêu','DVT', 'Năm trước','','Năm báo cáo','','',`Q${quarter}${year}${username.id}`];
@@ -291,7 +286,8 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                         data.push(row);
                     });
                     return data;
-                }else {
+                }else
+                {
                     NameFileDownload= "Báo cáo "+loaibaocaotext;
                     data.push(headerRow01, headerRow02, headerRow03, headerRow04,headerRow05 ,headerRow06,headerRow07,headerRow08);
                     group.forEach((ct, index) => {
@@ -304,6 +300,7 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                             (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(6))} ` :null,
                             (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(7))} ` :null,
                             (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(8))} ` :null,
+
                         ];
                         row._id=ct.id;
                         row._active=ct.is_active;
@@ -321,7 +318,6 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                 const workbook = new ExcelJS.Workbook();
                 const worksheet = workbook.addWorksheet('Sheet 1');
                 preparedData[0].forEach((row, rowIndex) => {
-
                     row.forEach((cell, colIndex) => {
                         // console.log(rowIndex, colIndex);
                         const excelCell = worksheet.getCell(rowIndex+1, colIndex+1);  // Get the specific cell
@@ -334,9 +330,7 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                             // If the cell is not an object (i.e., a normal value), assign the value
                             excelCell.value = cell  ;// Otherwise, set the regular value
                         }
-
                         if (rowIndex >= 8 && colIndex === 0) {
-
                             const id = row._id;
                             if (id) {
                                 const idCell = worksheet.getCell(`G${rowIndex + 1}`);
@@ -344,7 +338,6 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                                 const activetrue = worksheet.getCell(`H${rowIndex + 1}`);
                                 activetrue.value = row._active;
                             }
-
                         }
                     });
                 });
@@ -379,21 +372,25 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                 setColumnWidthsInRange(worksheet, 3,4,12);
                 setColumnWidthsInRange(worksheet, 2,2,30);
                 setColumnWidthsInRange(worksheet, 4,6,17);
-                EDITABLE_RANGES.forEach(range => {
-                    const parts = range.split(':');
-                    const start = parts[0];
-                    const end = parts[1] || parts[0];
-                    const startColLetter = start.replace(/[0-9]/g, '');
-                    const endColLetter = end.replace(/[0-9]/g, '');
-                    const startRow = parseInt(start.replace(/\D+/g, ''), 10);
-                    const endRow = parseInt(end.replace(/\D+/g, ''), 10);
-                    const startCol = columnLetterToNumber(startColLetter);
-                    const endCol = columnLetterToNumber(endColLetter);
-                    for (let row = startRow; row <= endRow; row++) {
+                const targetColumns = ["D","F"]; // các cột bạn muốn xử lý thêm
+                targetColumns.forEach(colLetter => {
+                    // Lấy số thứ tự cột
+                    const startCol = columnLetterToNumber(colLetter);
+                    const endCol = startCol; // chỉ 1 cột mỗi lần (nếu bạn muốn range, có thể thay đổi)
+                    for (let rowIndex = 0; rowIndex < preparedData[0].length; rowIndex++) {
+                        const excelRow = rowIndex + 1;
+                        const rowData = preparedData[0][rowIndex];
                         for (let col = startCol; col <= endCol; col++) {
-                            const colLetter = columnNumberToLetter(col);
-                            const cell = worksheet.getCell(`${colLetter}${row}`);
-                            cell.fill = null;
+                            const cellLetter = columnNumberToLetter(col);
+                            const cell = worksheet.getCell(`${cellLetter}${excelRow}`);
+                            if (rowData.is_active === true || rowData._active === true) {
+                                // ✅ Cho phép chỉnh sửa
+                                cell.fill = null; // xoá màu cũ
+                                cell.protection = { locked: false }; // cho phép edit
+                            } else {
+                                // ❌ Không active: khoá lại
+                                cell.protection = { locked: true };
+                            }
                         }
                     }
                 });
@@ -426,8 +423,8 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
             }else{
                 const workbook = new ExcelJS.Workbook();
                 const worksheet = workbook.addWorksheet('Sheet 1');
+                // console.log(preparedData[0]);
                 preparedData[0].forEach((row, rowIndex) => {
-
                     row.forEach((cell, colIndex) => {
                         // console.log(rowIndex, colIndex);
                         const excelCell = worksheet.getCell(rowIndex+1, colIndex+1);  // Get the specific cell
@@ -440,17 +437,14 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                             // If the cell is not an object (i.e., a normal value), assign the value
                             excelCell.value = cell  ;// Otherwise, set the regular value
                         }
-
                         if (rowIndex >= 8 && colIndex === 0) {
-
                             const id = row._id;
                             if (id) {
-                                const idCell = worksheet.getCell(`G${rowIndex + 1}`);
+                                const idCell = worksheet.getCell(`I${rowIndex + 1}`);
                                 idCell.value = id;
-                                const activetrue = worksheet.getCell(`H${rowIndex + 1}`);
+                                const activetrue = worksheet.getCell(`J${rowIndex + 1}`);
                                 activetrue.value = row._active;
                             }
-
                         }
                     });
                 });
@@ -473,35 +467,37 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                 worksheet.mergeCells(`${getExcelAlpha(2)}7:${getExcelAlpha(2)}8`);
                 worksheet.mergeCells(`${getExcelAlpha(3)}7:${getExcelAlpha(3)}8`);
 
-                // worksheet.mergeCells(`${getExcelAlpha(4)}7:${getExcelAlpha(4)}8`);
-                // worksheet.mergeCells(`${getExcelAlpha(4)}7:${getExcelAlpha(4)}8`);
-                // worksheet.mergeCells(`${getExcelAlpha(5)}7:${getExcelAlpha(5)}8`);
-                // worksheet.mergeCells(`${getExcelAlpha(6)}7:${getExcelAlpha(6)}8`);
+                worksheet.mergeCells(`${getExcelAlpha(4)}7:${getExcelAlpha(5)}7`);
+                worksheet.mergeCells(`${getExcelAlpha(6)}7:${getExcelAlpha(8)}7`);
 
-                colorbackgroundexcel(worksheet, 1, preparedData[0].length, 1, 6);
-                setBorderForRange(worksheet, 7,preparedData[0].length, 1, 6);
+                colorbackgroundexcel(worksheet, 1, preparedData[0].length, 1, 8);
+                setBorderForRange(worksheet, 7,preparedData[0].length, 1, 8);
                 aligRightForRange(worksheet,9,rawData.length+8,1,1);
                 aligLeftForRange(worksheet,9,rawData.length+8,2,2);
                 aligLeftForRange(worksheet,1,4,1,1);
                 setColumnWidthsInRange(worksheet, 1,1,10);
                 setColumnWidthsInRange(worksheet, 3,4,12);
                 setColumnWidthsInRange(worksheet, 2,2,30);
-                setColumnWidthsInRange(worksheet, 4,6,17);
-                EDITABLE_RANGES.forEach(range => {
-                    const parts = range.split(':');
-                    const start = parts[0];
-                    const end = parts[1] || parts[0];
-                    const startColLetter = start.replace(/[0-9]/g, '');
-                    const endColLetter = end.replace(/[0-9]/g, '');
-                    const startRow = parseInt(start.replace(/\D+/g, ''), 10);
-                    const endRow = parseInt(end.replace(/\D+/g, ''), 10);
-                    const startCol = columnLetterToNumber(startColLetter);
-                    const endCol = columnLetterToNumber(endColLetter);
-                    for (let row = startRow; row <= endRow; row++) {
+                setColumnWidthsInRange(worksheet, 4,8,17);
+                const targetColumns = ["D","H","E", "G"]; // các cột bạn muốn xử lý thêm
+                targetColumns.forEach(colLetter => {
+                    // Lấy số thứ tự cột
+                    const startCol = columnLetterToNumber(colLetter);
+                    const endCol = startCol; // chỉ 1 cột mỗi lần (nếu bạn muốn range, có thể thay đổi)
+                    for (let rowIndex = 0; rowIndex < preparedData[0].length; rowIndex++) {
+                        const excelRow = rowIndex + 1;
+                        const rowData = preparedData[0][rowIndex];
                         for (let col = startCol; col <= endCol; col++) {
-                            const colLetter = columnNumberToLetter(col);
-                            const cell = worksheet.getCell(`${colLetter}${row}`);
-                            cell.fill = null;
+                            const cellLetter = columnNumberToLetter(col);
+                            const cell = worksheet.getCell(`${cellLetter}${excelRow}`);
+                            if (rowData.is_active === true || rowData._active === true) {
+                                // ✅ Cho phép chỉnh sửa
+                                cell.fill = null; // xoá màu cũ
+                                cell.protection = { locked: false }; // cho phép edit
+                            } else {
+                                // ❌ Không active: khoá lại
+                                cell.protection = { locked: true };
+                            }
                         }
                     }
                 });
@@ -526,15 +522,13 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                     autoFilter: false,
                     pivotTables: false
                 });
-                worksheet.getColumn('G').hidden = true;
-                worksheet.getColumn('H').hidden = true;
+                worksheet.getColumn('I').hidden = true;
+                worksheet.getColumn('J').hidden = true;
                 // 7. Xuất file
                 const buffer = await workbook.xlsx.writeBuffer();
                 saveAs(new Blob([buffer]), NameFileDownload+".xlsx" || 'bao-cao.xlsx');
             }
             // 2. Load workbook
-
-
         } catch (err) {
             console.error('Error:', err);
             setError(err.message || 'Có lỗi xảy ra khi tạo báo cáo');
@@ -547,9 +541,11 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
         setError(null);
         let NameFileDownload="";
         try {
-            const response = await api.post(apiEndpoint, {year: year, id_loaibaocao: idLoai, month: month, id_xa: id_xa,});
+            console.log(year,idLoai,month,week,id_xa);
+            const response = await api.post('/chitieu/sumtichly', {year: year, id_loaibaocao: idLoai, month: month, id_xa: id_xa,});
             const tables = [];
             const rawData = response.data?.data || [];
+            console.log(rawData);
             let currentGroup = [];
             for (const chitieu of rawData) {currentGroup.push(chitieu);}
             if (currentGroup.length > 0) tables.push(currentGroup);
@@ -572,26 +568,9 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                     loaibaocaotext=`(Tuần ${week}-${year})`;
                     headerRow05=[`ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP TUẦN ${week}` ];
                 }else if(idLoai=== 2){
-                    // if(month===3)
-                    // {
-                    //     loaibaocaotext=`(Quý 1-${year})`;
-                    //     headerRow05=[`ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP Quý 1` ];
-                    //     headerRow07= ['STT','Chỉ tiêu','DVT', 'Lũy kế thực hiện cùng kỳ năm trước ','Kế hoạch năm','Thực hiện 3 tháng của năm báo cáo','',`M${month}${year}${username.id}`];
-                    // }else if(month===6)
-                    // {
-                    //     loaibaocaotext=`(Tháng ${month}-${year})`;
-                    //     headerRow05=[`ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP 6 THÁNG` ];
-                    //     headerRow07= ['STT','Chỉ tiêu','DVT', 'Lũy kế thực hiện cùng kỳ năm trước ','Kế hoạch năm','Thực hiện 6 tháng của năm báo cáo','',`M${month}${year}${username.id}`];
-                    // }else if(month===9)
-                    // {
-                    //     loaibaocaotext=`(Tháng ${month}-${year})`;
-                    //     headerRow05=[`ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP 9 THÁNG` ];
-                    //     headerRow07= ['STT','Chỉ tiêu','DVT', 'Lũy kế thực hiện cùng kỳ năm trước ','Kế hoạch năm','Thực hiện 9 tháng của năm báo cáo','',`M${month}${year}${username.id}`];
-                    // }else{
-                        loaibaocaotext=`(Tháng ${month}-${year})`;
-                        headerRow05=[`ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP THÁNG ${month}` ];
-                        headerRow07= ['STT','Chỉ tiêu','DVT', 'Lũy kế thực hiện cùng kỳ năm trước ','Kế hoạch năm','Thực hiện tháng của năm báo cáo','',`M${month}${year}${username.id}`];
-                    // }
+                    loaibaocaotext=`(Tháng ${month}-${year})`;
+                    headerRow05=[`ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP THÁNG ${month}` ];
+                    headerRow07= ['STT','Chỉ tiêu','DVT', 'Lũy kế thực hiện cùng kỳ năm trước ','Kế hoạch năm','Thực hiện tháng của năm báo cáo','',`M${month}${year}${username.id}`];
                     headerRow08=['','','','','','Trong tháng','Luỹ kế'];
                 }else if(idLoai=== 3){
 
@@ -609,12 +588,12 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                             ct.ma_chitieu,
                             ct.ten_chitieu,
                             // ct.dvt,
-                             (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
+                            (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
                             (formularweek[index] && formularweek[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,8), "E", getExcelAlpha(4))} ` : null,
                             (formularweek[index] && formularweek[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,8), "E", getExcelAlpha(5))} ` : null,
                             (formularweek[index] && formularweek[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,8), "E", getExcelAlpha(6))} ` :null,
                             (formularweek[index] && formularweek[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,8), "E", getExcelAlpha(7))} ` :
-                                (ct.is_active)?`=${getExcelAlpha(6)}${index + 9}+`+ ct.total_value2:null,
+                            (ct.is_active)?`=${getExcelAlpha(6)}${index + 9}+`+ ct.total_value2:null,
                         ];
                     }else{
                          row = [
@@ -629,12 +608,9 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                                 ( ct.is_active)?`=${getExcelAlpha(6)}${index+9}+`+ ct.total_value2:null,
                         ];
                     }
-
                     row._id=ct.id;
                     row._active=ct.is_active;
-
                     data.push(row);
-
                 });
                 return data;
             });
@@ -705,52 +681,28 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
             setColumnWidthsInRange(worksheet, 3,4,12);
             setColumnWidthsInRange(worksheet, 2,2,30);
             setColumnWidthsInRange(worksheet, 4,7,17);
-            if(idLoai===1){
-                // console.log("hello");
-                EDITABLE_RANGESWEEK.forEach(range => {
-                    const parts = range.split(':');
-                    const start = parts[0];
-                    const end = parts[1] || parts[0];
-
-                    const startColLetter = start.replace(/[0-9]/g, '');
-                    const endColLetter = end.replace(/[0-9]/g, '');
-                    const startRow = parseInt(start.replace(/\D+/g, ''), 10);
-                    const endRow = parseInt(end.replace(/\D+/g, ''), 10);
-
-                    const startCol = columnLetterToNumber(startColLetter);
-                    const endCol = columnLetterToNumber(endColLetter);
-
-                    for (let row = startRow; row <= endRow; row++) {
-                        for (let col = startCol; col <= endCol; col++) {
-                            const colLetter = columnNumberToLetter(col);
-                            const cell = worksheet.getCell(`${colLetter}${row}`);
-                            cell.fill = null;
+            const targetColumns = ["D","F"]; // các cột bạn muốn xử lý thêm
+            targetColumns.forEach(colLetter => {
+                // Lấy số thứ tự cột
+                const startCol = columnLetterToNumber(colLetter);
+                const endCol = startCol; // chỉ 1 cột mỗi lần (nếu bạn muốn range, có thể thay đổi)
+                for (let rowIndex = 0; rowIndex < preparedData[0].length; rowIndex++) {
+                    const excelRow = rowIndex + 1;
+                    const rowData = preparedData[0][rowIndex];
+                    for (let col = startCol; col <= endCol; col++) {
+                        const cellLetter = columnNumberToLetter(col);
+                        const cell = worksheet.getCell(`${cellLetter}${excelRow}`);
+                        if (rowData.is_active === true || rowData._active === true) {
+                            // ✅ Cho phép chỉnh sửa
+                            cell.fill = null; // xoá màu cũ
+                            cell.protection = { locked: false }; // cho phép edit
+                        } else {
+                            // ❌ Không active: khoá lại
+                            cell.protection = { locked: true };
                         }
                     }
-                });
-            }else{
-                EDITABLE_RANGES.forEach(range => {
-                    const parts = range.split(':');
-                    const start = parts[0];
-                    const end = parts[1] || parts[0];
-
-                    const startColLetter = start.replace(/[0-9]/g, '');
-                    const endColLetter = end.replace(/[0-9]/g, '');
-                    const startRow = parseInt(start.replace(/\D+/g, ''), 10);
-                    const endRow = parseInt(end.replace(/\D+/g, ''), 10);
-
-                    const startCol = columnLetterToNumber(startColLetter);
-                    const endCol = columnLetterToNumber(endColLetter);
-
-                    for (let row = startRow; row <= endRow; row++) {
-                        for (let col = startCol; col <= endCol; col++) {
-                            const colLetter = columnNumberToLetter(col);
-                            const cell = worksheet.getCell(`${colLetter}${row}`);
-                            cell.fill = null;
-                        }
-                    }
-                });
-            }
+                }
+            });
             // 3. Mở khóa các vùng cho phép chỉnh sửa
             worksheet.getCell(`A1`).value="Đơn vị: "+"UBND "+username.xa?.ten_xa;
             worksheet.getCell(`A2`).value="Người nhập báo cáo: "+username?.name;
@@ -792,7 +744,6 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
     };
 
     return (
-
         <div >
             <Button
                 onClick={handleDownload}
