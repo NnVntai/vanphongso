@@ -58,6 +58,8 @@ export default function ReportAll() {
         try {
             const { data } = await api.get("/loaibaocao");
             setFileTypes(Array.isArray(data) ? data : []);
+            // console.log(Array.isArray(data) ? data : []);
+            // setFileTypes(fileTypes => fileTypes.map(t => t.id === 4 ? t.name="Theo năm + 06 tháng + 09 tháng " : t))
         } catch (err) {
             console.error("Lỗi khi tải loại báo cáo:", err);
         }
@@ -98,12 +100,12 @@ export default function ReportAll() {
     }, [selectedFileType, year, month]);
     const getCards = () => {
         const type = parseInt(selectedFileType);
-        const monthofquarter = [ 3, 6,9,12];
+        // const monthofquarter = [ 3, 6,9,12];
         let count = 0;
         // console.log(getTotalWeeksInYear(year));
         if (type === 1) count = getTotalWeeksInYear(year);
         else if (type === 2) count = 11;
-        else if (type === 3) count = 3;
+        else if (type === 3) count = 4;
         else if (type === 4) count = 4;
         return Array.from({ length: count }, (_, i) => {
             const id = i + 1;
@@ -119,11 +121,10 @@ export default function ReportAll() {
                     type === 1
                         ? `Tuần ${id}`
                         : type === 2
-                            ? (!monthofquarter.includes(id)?`Tháng ${id}`:
-                                (id===3?`Quý 1`:(id===6?`6 Tháng`:`9 Tháng`)))
-                            : type === 3
+                            ? `Tháng ${id}`:
+                                 type === 3
                                 ? `Quý ${id}`
-                                : `Lần ${id}`,
+                                : (type === 4) ?(id===3?`Báo cáo 06 tháng`:id===4?`Báo cáo 09 tháng`:`Lần ${id}`):`Lần ${id}`,
                 stats
             };
         });
@@ -161,7 +162,8 @@ export default function ReportAll() {
                                     label="Loại báo cáo"
                                 >
                                     {fileTypes.map((type) => (
-                                        <MenuItem key={type.id} value={type.id}>{type.name}</MenuItem>
+
+                                        <MenuItem key={type.id} value={type.id}>{ type.id===4?type.name +" + 06 tháng + 09 tháng":type.name}</MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>

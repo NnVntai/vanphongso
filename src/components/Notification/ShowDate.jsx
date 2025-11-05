@@ -49,6 +49,7 @@ const ReportNotificationScheduler = ({
         const fetchData = async () => {
             try {
                 const { data } = await api.get("/report-notifications");
+                console.log(data);
                 setNotifications(data);
             } catch (err) {
                 console.error("Lỗi khi tải thông báo:", err);
@@ -204,8 +205,6 @@ const ReportNotificationScheduler = ({
                         // console.log(parsed);
                         if(getmonthin!==12)
                         {
-
-
                             const getweekin=dateall.week();
                             const reportName = reportMapName[item.id_loaibaocao] +
                                 (item.id_loaibaocao === 1 ? `  ${getweekin}` : '') +

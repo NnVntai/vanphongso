@@ -50,7 +50,6 @@ const ReportNotificationScheduler = ({
                                          month,
                                          week,
                                          quarter,
-                                         id_xaUser2,
                                          onSelectChange,
                                      }) => {
     const [notifications, setNotifications] = useState([]);
@@ -81,7 +80,7 @@ const ReportNotificationScheduler = ({
                 // 1️⃣ Lấy cấu hình các loại báo cáo
                 const { data: notificationsData } = await api.get("/report-notifications");
                 // // 2️⃣ Lấy danh sách báo cáo đã nộp kỳ trước
-                cosole.log(notificationsData);
+                console.log(notificationsData);
                 const { data: lateReports } = await api.post("/reportslateforuser", {year, month, week, id_xa, quarter,});
                 // console.log(lateReports);
                 const { data: oldReport } = await api.post("/oldreportforuser", {year, month, week, id_xa, quarter,});
@@ -97,7 +96,7 @@ const ReportNotificationScheduler = ({
                 setNotificationsLate(lateReportsOld);
                 setNotificationsOld(oldReport);
                 setNotifications(notificationsData);
-                // console.log(notificationsData);
+                console.log(notificationsData);
 
             } catch (err) {
                 console.error("Lỗi khi tải thông báo:", err);

@@ -9,7 +9,7 @@ import 'dayjs/locale/vi'; // <--- import locale Vietnamese
 dayjs.locale('vi');
 const quarterLy = [
     { value: 1, label: 'Lần 1' },
-    { value: 2, label: 'Lần 2' },
+    // { value: 2, label: 'Lần 2' },
 
 ];
 const monthly = [

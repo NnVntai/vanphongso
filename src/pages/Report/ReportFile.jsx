@@ -29,7 +29,6 @@ import TableHearder from "../../components/Table/TableHearder";
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
 
-import ShowDate from "../../components/Notification/ShowDateTest.jsx";
 import api from "@/config";
 import React, {useEffect, useState, useRef} from "react";
 import StepWizard from "../../components/Wizard/StepWizard.jsx"
@@ -342,17 +341,6 @@ export default function FileInterface() {
             setLoading(false);
         }
     };
-    // const getNotification = async () => {
-    //     try {
-    //         const {data} = await api.get("/report-notifications");
-    //         setNotification(data);
-    //         // console.log(notification);
-    //     } catch (err) {
-    //         console.error("Lỗi khi tải loại tệp:", err);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // }
     const resetFileUpload = () => {
         setFileName("");
         setPreviewData([]);
@@ -371,6 +359,7 @@ export default function FileInterface() {
         }
         // console.log(result);
     };
+    // LOAD LẦN ĐẦU
     useEffect(() => {
         const machineTime = getMachineTime();
         setYear(machineTime.year);
@@ -379,8 +368,10 @@ export default function FileInterface() {
         setQuarter(machineTime.quarter);
         fetchAndSetTime();  // Gọi hàm
         fetchFileTypes();
-        // getNotification();
     }, []);
+    // useEffect(() => {
+    //     console.log(year,month,week,quarter,selectedFileType);
+    // }, [year,month,week,quarter,selectedFileType]);
     const checkClickSend = async () => {
 
         if (!selectedFileType || !year ||!fileName||
@@ -496,12 +487,6 @@ export default function FileInterface() {
             });
         }
     }
-    const fileMap = {
-        1: "mau-bao-cao-tuan.xlsx",
-        2: "mau-bao-cao-thang.xlsx",
-        3: "mau-bao-cao-quy.xlsx",
-        4: "mau-bao-cao-nam.xlsx"
-    };
     return (
         <TableHearder title="Nộp báo cáo nông nghiệp">
             {loadingGlobal && (
@@ -512,7 +497,7 @@ export default function FileInterface() {
                         left: 0,
                         width: "100vw",
                         height: "100vh",
-                        backgroundColor: "rgba(0,0,0,0.4)",
+                        backgroundColor: "rgba(0,0,0,0)",
                         zIndex: 2000,
                         display: "flex",
                         flexDirection: "column",
@@ -532,63 +517,61 @@ export default function FileInterface() {
                     </Typography>
                 </Box>
             )}
-            <div className="bg-amber-50">
+            <div className="bg-white">
                 <Box maxWidth="sx" mx="auto" p={3}>
                     <StepWizard selectedReports={(selectedReports)=>{
 
-                        if(selectedReports[0]?.id_loaibaocao === 1&&selectedReports[0].late===true)
-                        {
-                            setQuarter(null);
-                            setWeek(selectedReports[0].week);
-                            setMonth(selectedReports[0].month);
-                            setYear(selectedReports[0].year);
-                            setSelectedFileType(selectedReports[0].id_loaibaocao);
-                            setIsLate(true);
-                        }
-                        else if(selectedReports[0]?.id_loaibaocao === 2&&selectedReports[0].late===true)
-                        {
-                            setWeek(null);
-                            setQuarter(null);
-                            setMonth(selectedReports[0].month);
-                            setYear(selectedReports[0].year);
-                            setSelectedFileType(selectedReports[0].id_loaibaocao);
-                            setIsLate(true);
-                        }else if (selectedReports[0]?.id_loaibaocao === 1) {
+                        // if(selectedReports[0]?.id_loaibaocao === 1&&selectedReports[0].late===true)
+                        // {
+                        //     setQuarter(null);
+                        //     setWeek(selectedReports[0].week);
+                        //     setMonth(selectedReports[0].month);
+                        //     setYear(selectedReports[0].year);
+                        //     setSelectedFileType(selectedReports[0].id_loaibaocao);
+                        //     setIsLate(true);
+                        // }
+                        // else if(selectedReports[0]?.id_loaibaocao === 2&&selectedReports[0].late===true)
+                        // {
+                        //     setWeek(null);
+                        //     setQuarter(null);
+                        //     setMonth(selectedReports[0].month);
+                        //     setYear(selectedReports[0].year);
+                        //     setSelectedFileType(selectedReports[0].id_loaibaocao);
+                        //     setIsLate(true);
+                        // }else
+                            if (selectedReports[0]?.id_loaibaocao === 1) {
                             fetchAndSetTime();
                             setQuarter(null);
                             setMonth(null);
-                            setYear(year);
+                            // setYear(year);
                             setWeek(week);
                             setSelectedFileType(selectedReports[0].id_loaibaocao);
-                            setIsLate(false);
+                            setIsLate(selectedReports[0].islate);
                         } else if (selectedReports[0]?.id_loaibaocao === 2) {
                             fetchAndSetTime();
-                            // console.log(selectedReports);
                             setQuarter(null);
                             setWeek(null);
                             setMonth(month);
-                            setYear(year);
+                            // setYear(year);
                             setSelectedFileType(selectedReports[0].id_loaibaocao);
-                            setIsLate(false);
+                            setIsLate(selectedReports[0].islate);
                         } else if (selectedReports[0]?.id_loaibaocao === 3) {
-                            fetchAndSetTime();
                             setQuarter(selectedReports[0].quarter);
                             setMonth(null);
-                            setYear(year);
+                            // setYear(year);
                             setSelectedFileType(selectedReports[0].id_loaibaocao);
-                            setIsLate(false);
+                            setIsLate(selectedReports[0].islate);;
                         } else if (selectedReports[0]?.id_loaibaocao === 4) {
-                            fetchAndSetTime();
                             setNumberYear(selectedReports[0].quarter);
                             setMonth(null);
-                            setYear(year);
+                            // setYear(year);
                             setSelectedFileType(selectedReports[0].id_loaibaocao);
-                            setIsLate(false);
+                            setIsLate(selectedReports[0].islate);
                         } else {
                             setSelectedFileType();
                         }
                     }}
-                                year={year} month={month} week={week} numberYear={numberYear}
+                                year={year} month={month} week={week} numberYear={numberYear} quarter={quarter}
                                 selectedFileType={selectedFileType}
                                 // selectIdChose={selectIdChose}
                                 handleFileChange={handleFileChange}
@@ -600,59 +583,6 @@ export default function FileInterface() {
                                 setNextStep={setNextStep}
                                 reportCheck={reportCheck}
                     ></StepWizard>
-                    <>
-                    {/*<Box  maxWidth="sm" mx="auto" p={3}>*/}
-                    {/*    <Grid container spacing={3} mt={3}>*/}
-                    {/*        <Grid item xs={6}>*/}
-                    {/*            <ExcelDownloader*/}
-                    {/*                year={year}*/}
-                    {/*                idLoai={selectedFileType}*/}
-                    {/*                ten_xa={JSON.parse(localStorage.getItem("username"))?.xa?.ten_xa}*/}
-                    {/*                id_xa={JSON.parse(localStorage.getItem("username"))?.xa?.id}*/}
-                    {/*                username={JSON.parse(localStorage.getItem("username"))}*/}
-                    {/*                month={month}*/}
-                    {/*                week={week}*/}
-                    {/*                number={numberYear}*/}
-                    {/*                quarter={quarter}*/}
-                    {/*                templatePath={`/templates/${fileMap[selectedType]}`}*/}
-
-                    {/*                outputFileName={`BaoCao_${fileTypes.find(ft => ft.id == selectedFileType)?.name}_${year}.xlsx`}*/}
-
-                    {/*                apiEndpoint="/chitieu/sumtichly"*/}
-                    {/*            />*/}
-                    {/*        </Grid>*/}
-                    {/*        <Grid item xs={6}>*/}
-                    {/*            <input type="file" ref={inputRef} style={{display: 'none'}} onChange={handleFileChange}/>*/}
-                    {/*            <Button fullWidth variant="contained" startIcon={<UploadFileIcon/>} onClick={handleClick}>Tải*/}
-                    {/*                lên</Button>*/}
-                    {/*            {fileName &&*/}
-                    {/*                <Typography variant="caption" color="success.main">Đã chọn: {fileName}</Typography>}*/}
-                    {/*        </Grid>*/}
-                    {/*        <Grid item xs={12}>*/}
-                    {/*            <Button fullWidth color="success" variant="contained" onClick={() => {*/}
-                    {/*                if (!selectedFileType || !year ||!fileName||*/}
-                    {/*                    (selectedType === 1 && (!week || !month)) ||*/}
-                    {/*                    (selectedType === 2 && !month) ||*/}
-                    {/*                    (selectedType === 3 && !quarter) ||*/}
-                    {/*                    (selectedType === 4 && !numberYear)) {*/}
-                    {/*                    confirmAlert({*/}
-                    {/*                        title: 'Thiếu thông tin',*/}
-                    {/*                        message: '⚠️ Vui lòng chọn báo cáo cần nộp.',*/}
-                    {/*                        buttons: [*/}
-                    {/*                            {*/}
-                    {/*                                label: 'OK', onClick: () => {*/}
-                    {/*                                }*/}
-                    {/*                            }*/}
-                    {/*                        ]*/}
-                    {/*                    });*/}
-                    {/*                    return;*/}
-                    {/*                }*/}
-                    {/*                setOpenDialog(true);*/}
-                    {/*            }}>📤 Nộp báo cáo</Button>*/}
-                    {/*        </Grid>*/}
-                    {/*    </Grid>*/}
-                    {/*</Box>*/}
-                    </>
                 </Box>
                 <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="lg" fullWidth
                         TransitionComponent={Fade} TransitionProps={{

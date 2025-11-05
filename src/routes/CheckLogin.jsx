@@ -31,7 +31,7 @@ const CheckLogin = () => {
         const nowClient = Date.now();
         // console.log(serverTimeAtLogin,clientTimeAtLogin);
         const estimatedServerNow = serverTimeAtLogin + (nowClient - clientTimeAtLogin);
-        console.log(tokenExp, estimatedServerNow);
+        // console.log(tokenExp, estimatedServerNow);
         if (tokenExp < estimatedServerNow) {
           localStorage.removeItem("authToken");
           confirmAlert({
