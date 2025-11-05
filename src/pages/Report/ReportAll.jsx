@@ -104,7 +104,7 @@ export default function ReportAll() {
         if (type === 1) count = getTotalWeeksInYear(year);
         else if (type === 2) count = 11;
         else if (type === 3) count = 3;
-        else if (type === 4) count = 2;
+        else if (type === 4) count = 4;
         return Array.from({ length: count }, (_, i) => {
             const id = i + 1;
             let stats = {};
