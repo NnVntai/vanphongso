@@ -24,22 +24,16 @@ import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 
 dayjs.extend(isoWeek);
-
-
 // Lấy số tuần trong một năm bất kỳ
-
 const currentYear = new Date().getFullYear();
 const currentMonth = new Date().getMonth() + 1;
 const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
-const months = Array.from({ length: 12 }, (_, i) => i + 1);
-
 const cardColorsMui = {
     1: "#DBEAFE", // blue-100
     2: "#DCFCE7", // green-100
     3: "#FEF9C3", // yellow-100
     4: "#E9D5FF", // purple-100
 };
-
 export default function ReportAll() {
     const [fileTypes, setFileTypes] = useState([]);
     const [selectedFileType, setSelectedFileType] = useState(1);
@@ -84,8 +78,11 @@ export default function ReportAll() {
     const handleFilter = () => {
         fetchStats(); // Gọi API khi click nút lọc
     };
+    // const getTotalWeeksInYear=(year)=> {
+    //     return dayjs(`${year}-12-28`).isoWeek();
+    // }
     const getTotalWeeksInYear=(year)=> {
-        return dayjs(`${year}-12-28`).isoWeek();
+        return 52;
     }
     const handleReset = () => {
         setSelectedFileType(1);
@@ -95,7 +92,7 @@ export default function ReportAll() {
     };
     useEffect(() => {
         if (selectedFileType && year) {
-            fetchStats(); // Tự động gọi API khi thay đổi loại báo cáo, năm hoặc tháng
+            fetchStats();
         }
     }, [selectedFileType, year, month]);
     const getCards = () => {
@@ -104,7 +101,7 @@ export default function ReportAll() {
         let count = 0;
         // console.log(getTotalWeeksInYear(year));
         if (type === 1) count = getTotalWeeksInYear(year);
-        else if (type === 2) count = 11;
+        else if (type === 2) count = 12;
         else if (type === 3) count = 4;
         else if (type === 4) count = 4;
         return Array.from({ length: count }, (_, i) => {
@@ -129,7 +126,6 @@ export default function ReportAll() {
             };
         });
     };
-
     const handleOpen = (report) => {
         setReportStats({
             total: (report.stats?.submitted?.length || 0) + (report.stats?.not_submitted?.length || 0),
@@ -140,12 +136,10 @@ export default function ReportAll() {
         // console.log(report);
         setOpen(true);
     };
-
     const handleClose = () => {
         setOpen(false);
         setSelectedReport(null);
     };
-
     const cards = getCards();
 
     return (
@@ -259,7 +253,6 @@ export default function ReportAll() {
                         ))}
                     </div>
                 )}
-
                 <Modal open={open} onClose={handleClose} closeAfterTransition>
                     <Box className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-lg p-4 w-[90vw] md:w-[70vw] lg:w-[60vw] max-h-[90vh] overflow-hidden">
                         <div className="flex items-center justify-between mb-2">
@@ -293,7 +286,6 @@ export default function ReportAll() {
                                 </ul>
                             </div>
                         </div>
-
                         <DownloadExcelButton
                             loaibaocaoId={selectedFileType}
                             year={year}

@@ -16,26 +16,26 @@ const Home = () => {
             <h1 class="text-3xl font-bold text-center mb-8 mt-8 text-white text-shadow-lg">Chức năng</h1>
 
             <div class="flex flex-wrap justify-center gap-5">
-                {role==="admin"&&
+                {role==="client"&&
                     (<Link to="/kehoachfile" class="bg-white rounded-lg shadow-md p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col items-center justify-center flex-1 min-w-[250px] max-w-[300px] ">
                         <div class="w-15 h-15 mb-5 flex items-center justify-center">
                             < PiMicrosoftExcelLogo class=" text-black-500 text-7xl" />
                             <i class="fas fa-home text-blue-500 text-4xl"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Nhập kế hoạch File Excel</h3>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Nhập kế hoạch bằng File Excel</h3>
 
                     </Link >)}
 
-                {role==="admin"&&
-                    (<Link to="/kehoachmanual" class="bg-white rounded-lg shadow-md p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col items-center justify-center flex-1 min-w-[250px] max-w-[300px] ">
-                        <div class="w-15 h-15 mb-5 flex items-center justify-center">
-                            <FaWpforms  class=" text-black-500 text-7xl" />
-                            <i class="fas fa-home text-blue-500 text-4xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2"> Nhập kế hoạch thủ công</h3>
+                {/*{role==="client"&&*/}
+                {/*    (<Link to="/kehoachmanual" class="bg-white rounded-lg shadow-md p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col items-center justify-center flex-1 min-w-[250px] max-w-[300px] ">*/}
+                {/*        <div class="w-15 h-15 mb-5 flex items-center justify-center">*/}
+                {/*            <FaWpforms  class=" text-black-500 text-7xl" />*/}
+                {/*            <i class="fas fa-home text-blue-500 text-4xl"></i>*/}
+                {/*        </div>*/}
+                {/*        <h3 class="text-xl font-bold text-gray-800 mb-2"> Nhập kế hoạch thủ công</h3>*/}
 
-                    </Link >)}
-                <Link to="/indexchitieu" class="bg-white rounded-lg shadow-md p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col items-center justify-center flex-1 min-w-[250px] max-w-[300px] ">
+                {/*    </Link >)}*/}
+                <Link to="/" class="bg-white rounded-lg shadow-md p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col items-center justify-center flex-1 min-w-[250px] max-w-[300px] ">
                     <div class="w-15 h-15 mb-5 flex items-center justify-center">
                         <MdOutlineKeyboardReturn  class=" text-black-500 text-7xl" />
                         <i class="fas fa-home text-blue-500 text-4xl"></i>

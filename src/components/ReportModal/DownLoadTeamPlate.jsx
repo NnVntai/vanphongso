@@ -395,7 +395,7 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                     }
                 });
                 // 3. Mở khóa các vùng cho phép chỉnh sửa
-                unlockEditableRanges(worksheet);
+                // unlockEditableRanges(worksheet);
                 worksheet.getCell(`A1`).value="Đơn vị: "+"UBND "+username.xa?.ten_xa;
                 worksheet.getCell(`A2`).value="Người nhập báo cáo: "+username?.name;
                 worksheet.getCell(`A3`).value="Số ĐT: 0"+username?.phone;
@@ -502,7 +502,7 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                     }
                 });
                 // 3. Mở khóa các vùng cho phép chỉnh sửa
-                unlockEditableRanges(worksheet);
+                // unlockEditableRanges(worksheet);
                 worksheet.getCell(`A1`).value="Đơn vị: "+"UBND "+username.xa?.ten_xa;
                 worksheet.getCell(`A2`).value="Người nhập báo cáo: "+username?.name;
                 worksheet.getCell(`A3`).value="Số ĐT: 0"+username?.phone;
@@ -621,7 +621,6 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet('Sheet 1');
             preparedData[0].forEach((row, rowIndex) => {
-
                 row.forEach((cell, colIndex) => {
                     // console.log(rowIndex, colIndex);
                     const excelCell = worksheet.getCell(rowIndex+1, colIndex+1);  // Get the specific cell
@@ -634,9 +633,7 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                         // If the cell is not an object (i.e., a normal value), assign the value
                         excelCell.value = cell  ;// Otherwise, set the regular value
                     }
-
                     if (rowIndex >= 8 && colIndex === 0) {
-
                         const id = row._id;
                         if (id) {
                             const idCell = worksheet.getCell(`H${rowIndex + 1}`);
@@ -644,11 +641,9 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                             const activetrue = worksheet.getCell(`I${rowIndex + 1}`);
                             activetrue.value = row._active;
                         }
-
                     }
                 });
             });
-
             worksheet.columns.forEach((column) => {
                 column.alignment = {
                     vertical: 'middle',
@@ -711,7 +706,7 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
 
             // console.log(worksheet);
             // 3. Mở khóa các vùng cho phép chỉnh sửa
-            unlockEditableRanges(worksheet,idLoai);
+            // unlockEditableRanges(worksheet,idLoai);
 
             worksheet.getColumn('H').hidden = true;
             worksheet.getColumn('I').hidden = true;

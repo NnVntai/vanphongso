@@ -33,16 +33,12 @@ const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
 
 export default function FileInterface() {
     const mergesRef = useRef([]);
-
-
     const [year, setYear] = useState(currentYear);
     const [fileName, setFileName] = useState("");
     const [previewData, setPreviewData] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
     const inputRef = useRef(null);
     let datapost=useRef([]);
-
-
     const handleClick = () => inputRef.current.click();
     const toValidString = (value) => {
         if (value === null || value === undefined || value === "") {
@@ -50,7 +46,6 @@ export default function FileInterface() {
         }
         return String(value);
     };
-
     const handleFileChange = async (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -70,34 +65,24 @@ export default function FileInterface() {
                     // const cell = sheet.getCell('A2');
                     // const id = cell.model?.custom?.id;
                     for (let j = 1; j <= row.cellCount; j++) {
-
                         const cell = row.getCell(j);
                         const val = cell.value;
-
                         let finalValue = "";
-
 // Nếu là công thức
                         if (val && typeof val === 'object' && val.formula !== undefined) {
                             finalValue = val.result ?? "";
                         } else {
                             finalValue = val ?? "";
                         }
-
 // Nếu là chuỗi số, chuyển sang số
                         if (typeof finalValue === "string" && !isNaN(finalValue.trim())) {
                             finalValue = Number(finalValue.trim());
                         }
-
                         rowData.push(finalValue);
                         // rowData.push(row.getCell(j).value ?? ""); // giữ trống nếu không có dữ liệu
                     }
                     // console.log(rowData);
                     jsonData.push(rowData);
-                    // console.log(worksheet.getCell(i,1));
-                    // if(row.getCell(1).model?.custom?.id)
-                    // {
-                    //     console.log(row.getCell(1).model?.custom?.id)
-                    // }
                 }
                 const maxCols = Math.max(...jsonData.map((row) => row.length));
                 const normalized = jsonData.map((row) => {
@@ -140,6 +125,7 @@ export default function FileInterface() {
                                     id_chitieu: previrewExcel[i][4]??"",
                                     kehoach: toValidString(previrewExcel[i][3]),
                                     year: year,
+                                    id_xa:JSON.parse(localStorage.getItem("username")).id_xa
                                 })
                             }
                         }
@@ -151,19 +137,9 @@ export default function FileInterface() {
             reader.readAsArrayBuffer(file);
         }
     };
-
-
-
-
-    useEffect(() => {
-
-    }, []);
-
     const handleSubmitReport = async () => {
         const file = inputRef.current?.files[0];
         if ( !file) return;
-
-
         try {
             // Nếu không duplicate, tiếp tục nộp dữ liệu
             // console.log( datapost.current);

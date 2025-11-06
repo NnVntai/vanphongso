@@ -47,7 +47,6 @@ async function getTimeInfo(timezone = "Asia/Ho_Chi_Minh", allowedDifferenceMinut
         });
         if (!response.statusText) throw new Error(`Lỗi API: ${response.status}`);
         const data = response.data;
-
         // Giải nén dữ liệu
         const {
             year,
@@ -60,7 +59,6 @@ async function getTimeInfo(timezone = "Asia/Ho_Chi_Minh", allowedDifferenceMinut
             diffMinutes,
             isTimeAccurate
         } = data;
-
         if (!isTimeAccurate) {
             confirmAlert({
                 title: "Lỗi đồng bộ thời gian",
@@ -71,9 +69,7 @@ async function getTimeInfo(timezone = "Asia/Ho_Chi_Minh", allowedDifferenceMinut
         } else {
             console.log("✅ Giờ máy khớp với giờ chuẩn.");
         }
-
         return data;
-
     } catch (err) {
         console.error("❌ Lỗi khi lấy thời gian từ API:", err.message);
         return null;
@@ -81,7 +77,6 @@ async function getTimeInfo(timezone = "Asia/Ho_Chi_Minh", allowedDifferenceMinut
 }
 function getMachineTime() {
     const now = new Date();
-
     const year = now.getFullYear();
     const month = now.getMonth() + 1;
     const day = now.getDate();
@@ -89,7 +84,6 @@ function getMachineTime() {
     const minute = now.getMinutes();
     const quarter = Math.floor((month - 1) / 3) + 1;
     const week = getISOWeek(now);
-
     return {
         now,
         year,
@@ -129,6 +123,7 @@ export default function FileInterface() {
     const [openDialog, setOpenDialog] = useState(false);
     const inputRef = useRef(null);
     let datapost = useRef([]);
+    let datapostyear = useRef([]);
     const selectedType = parseInt(selectedFileType);
     const handleClick = () => inputRef.current.click();
     const [nextStep, setNextStep] = useState(false);
@@ -286,18 +281,47 @@ export default function FileInterface() {
                     }
                     if (previrewExcel[0].length < 9 && selectedFileType > 2) {
                         // console.log(previrewExcel[0].length);
-                        for (let i = 0; i < previrewExcel.length; i++) {
-                            if (previrewExcel[i][7] == true) {
-                                datapost.current.push(
-                                    {
-                                        id_report: null,
-                                        id_chitieu: previrewExcel[i][6],
-                                        value1: (previrewExcel[i][3] && typeof previrewExcel[i][3] === 'object') ? toValidString(previrewExcel[i][3].result) : toValidString(previrewExcel[i][3]),
-                                        value2: (previrewExcel[i][5] && typeof previrewExcel[i][5] === 'object') ? toValidString(previrewExcel[i][5].result) : toValidString(previrewExcel[i][5]),
-                                        value3: null,
-                                    });
+                        if(selectedFileType===3&&quarter>1)
+                        {
+                            if(quarter===2||quarter===3||quarter===4)
+                            {
+                                for (let i = 0; i < previrewExcel.length; i++) {
+                                    if (previrewExcel[i][7] == true) {
+                                        datapost.current.push(
+                                        {
+                                            id_report: null,
+                                            id_chitieu: previrewExcel[i][6],
+                                            value1: (previrewExcel[i][3] && typeof previrewExcel[i][3] === 'object') ? toValidString(previrewExcel[i][3].result) : toValidString(previrewExcel[i][3]),
+                                            value2: (previrewExcel[i][6] && typeof previrewExcel[i][6] === 'object') ? toValidString(previrewExcel[i][6].result) : toValidString(previrewExcel[i][6]),
+                                            value3: null,
+                                        });
+                                        datapostyear.current.push(
+                                            {
+                                                id_report: null,
+                                                id_chitieu: previrewExcel[i][6],
+                                                value1: (previrewExcel[i][4] && typeof previrewExcel[i][4] === 'object') ? toValidString(previrewExcel[i][4].result) : toValidString(previrewExcel[i][4]),
+                                                value2: (previrewExcel[i][7] && typeof previrewExcel[i][7] === 'object') ? toValidString(previrewExcel[i][7].result) : toValidString(previrewExcel[i][7]),
+                                                value3: null,
+                                            });
+
+                                    }
+                                }
+                            }
+                        }else{
+                            for (let i = 0; i < previrewExcel.length; i++) {
+                                if (previrewExcel[i][7] == true) {
+                                    datapost.current.push(
+                                        {
+                                            id_report: null,
+                                            id_chitieu: previrewExcel[i][6],
+                                            value1: (previrewExcel[i][3] && typeof previrewExcel[i][3] === 'object') ? toValidString(previrewExcel[i][3].result) : toValidString(previrewExcel[i][3]),
+                                            value2: (previrewExcel[i][5] && typeof previrewExcel[i][5] === 'object') ? toValidString(previrewExcel[i][5].result) : toValidString(previrewExcel[i][5]),
+                                            value3: null,
+                                        });
+                                }
                             }
                         }
+
                     } else if (previrewExcel[0].length > 8 && selectedFileType < 3) {
                         for (let i = 0; i < previrewExcel.length; i++) {
                             if (previrewExcel[i][8] == true) {
@@ -435,15 +459,107 @@ export default function FileInterface() {
             if (numberYear) formData.append("number_report", numberYear);
         }
         try {
-            let response = await api.post("/reports", formData, {
-                headers: {"Content-Type": "multipart/form-data"},
-            });
-            if (response.data.message === 'duplicate') {
-                setLoadingGlobal(false);
-                setNextStep(true);
+            if(selectedFileType===3&&quarter>1)
+            {
+                try {
+                    let response = await api.post("/reports", formData, {
+                        headers: {"Content-Type": "multipart/form-data"},
+                    });
+                    if (response.data.message === 'duplicate') {
+                        setLoadingGlobal(false);
+                        setNextStep(true);
+                        confirmAlert({
+                            title: 'Lỗi',
+                            message: '❌ Báo cáo này đã được nộp trước đó. Không thể nộp lại.',
+                            buttons: [
+                                {
+                                    label: 'OK', onClick: () => {
+                                    }
+                                }
+                            ]
+                        });
+                        return; // dừng không tiếp tục xử lý
+                    }
+                    // Nếu không duplicate, tiếp tục nộp dữ liệu
+                    for (let i = 0; i < datapost.current.length; i++) {
+                        datapost.current[i].id_report = response.data.id;
+                    }
+                    await api.post("/report-data-bulk-insert", {records: datapost.current});
+                    formData.set("id_loaibaocao", 4);
+                    formData.delete("quarterly_report");
+                    if(quarter===2)
+                    {
+                        formData.append("number_report", 3);
+                    }else if(quarter===3){
+                        formData.append("number_report", 4);
+                    }else if(quarter===4){
+                        formData.append("number_report", 2);
+                    }
+                    // báo cao 2
+                    let response2 = await api.post("/reports", formData, {
+                        headers: {"Content-Type": "multipart/form-data"},
+                    });
+
+                    if (response.data.message === 'duplicate') {
+                        setLoadingGlobal(false);
+                        setNextStep(true);
+                        confirmAlert({
+                            title: 'Lỗi',
+                            message: '❌ Báo cáo này đã được nộp trước đó. Không thể nộp lại.',
+                            buttons: [
+                                {
+                                    label: 'OK', onClick: () => {
+                                    }
+                                }
+                            ]
+                        });
+                        return; // dừng không tiếp tục xử lý
+                    }
+                    // Nếu không duplicate, tiếp tục nộp dữ liệu
+                    for (let i = 0; i < datapostyear.current.length; i++) {
+                        datapostyear.current[i].id_report = response2.data.id;
+                    }
+                    await api.post("/report-data-bulk-insert", {records: datapostyear.current});
+                    confirmAlert({
+                        title: 'Thông báo',
+                        message: '📬 Báo cáo đã được nộp thành công!',
+                        buttons: [
+                            {
+                                label: 'OK', onClick: () => {
+                                }
+                            }
+                        ]
+                    });
+                }catch (e) {
+                    console.log(e);
+                }
+            }else{
+                let response = await api.post("/reports", formData, {
+                    headers: {"Content-Type": "multipart/form-data"},
+                });
+                if (response.data.message === 'duplicate') {
+                    setLoadingGlobal(false);
+                    setNextStep(true);
+                    confirmAlert({
+                        title: 'Lỗi',
+                        message: '❌ Báo cáo này đã được nộp trước đó. Không thể nộp lại.',
+                        buttons: [
+                            {
+                                label: 'OK', onClick: () => {
+                                }
+                            }
+                        ]
+                    });
+                    return; // dừng không tiếp tục xử lý
+                }
+                // Nếu không duplicate, tiếp tục nộp dữ liệu
+                for (let i = 0; i < datapost.current.length; i++) {
+                    datapost.current[i].id_report = response.data.id;
+                }
+                await api.post("/report-data-bulk-insert", {records: datapost.current});
                 confirmAlert({
-                    title: 'Lỗi',
-                    message: '❌ Báo cáo này đã được nộp trước đó. Không thể nộp lại.',
+                    title: 'Thông báo',
+                    message: '📬 Báo cáo đã được nộp thành công!',
                     buttons: [
                         {
                             label: 'OK', onClick: () => {
@@ -451,23 +567,7 @@ export default function FileInterface() {
                         }
                     ]
                 });
-                return; // dừng không tiếp tục xử lý
             }
-            // Nếu không duplicate, tiếp tục nộp dữ liệu
-            for (let i = 0; i < datapost.current.length; i++) {
-                datapost.current[i].id_report = response.data.id;
-            }
-            await api.post("/report-data-bulk-insert", {records: datapost.current});
-            confirmAlert({
-                title: 'Thông báo',
-                message: '📬 Báo cáo đã được nộp thành công!',
-                buttons: [
-                    {
-                        label: 'OK', onClick: () => {
-                        }
-                    }
-                ]
-            });
             setLoadingGlobal(false);
             setNextStep(true);
             setFileName("");
@@ -520,26 +620,7 @@ export default function FileInterface() {
             <div className="bg-white">
                 <Box maxWidth="sx" mx="auto" p={3}>
                     <StepWizard selectedReports={(selectedReports)=>{
-
-                        // if(selectedReports[0]?.id_loaibaocao === 1&&selectedReports[0].late===true)
-                        // {
-                        //     setQuarter(null);
-                        //     setWeek(selectedReports[0].week);
-                        //     setMonth(selectedReports[0].month);
-                        //     setYear(selectedReports[0].year);
-                        //     setSelectedFileType(selectedReports[0].id_loaibaocao);
-                        //     setIsLate(true);
-                        // }
-                        // else if(selectedReports[0]?.id_loaibaocao === 2&&selectedReports[0].late===true)
-                        // {
-                        //     setWeek(null);
-                        //     setQuarter(null);
-                        //     setMonth(selectedReports[0].month);
-                        //     setYear(selectedReports[0].year);
-                        //     setSelectedFileType(selectedReports[0].id_loaibaocao);
-                        //     setIsLate(true);
-                        // }else
-                            if (selectedReports[0]?.id_loaibaocao === 1) {
+                        if (selectedReports[0]?.id_loaibaocao === 1) {
                             fetchAndSetTime();
                             setQuarter(null);
                             setMonth(null);
@@ -560,7 +641,7 @@ export default function FileInterface() {
                             setMonth(null);
                             // setYear(year);
                             setSelectedFileType(selectedReports[0].id_loaibaocao);
-                            setIsLate(selectedReports[0].islate);;
+                            setIsLate(selectedReports[0].islate);
                         } else if (selectedReports[0]?.id_loaibaocao === 4) {
                             setNumberYear(selectedReports[0].quarter);
                             setMonth(null);
@@ -571,17 +652,17 @@ export default function FileInterface() {
                             setSelectedFileType();
                         }
                     }}
-                                year={year} month={month} week={week} numberYear={numberYear} quarter={quarter}
-                                selectedFileType={selectedFileType}
-                                // selectIdChose={selectIdChose}
-                                handleFileChange={handleFileChange}
-                                handleClick={handleClick}
-                                fileName={fileName}
-                                inputRef={inputRef}
-                                checkClickSend={checkClickSend}
-                                nextStep={nextStep}
-                                setNextStep={setNextStep}
-                                reportCheck={reportCheck}
+                    year={year} month={month} week={week} numberYear={numberYear} quarter={quarter}
+                    selectedFileType={selectedFileType}
+                    // selectIdChose={selectIdChose}
+                    handleFileChange={handleFileChange}
+                    handleClick={handleClick}
+                    fileName={fileName}
+                    inputRef={inputRef}
+                    checkClickSend={checkClickSend}
+                    nextStep={nextStep}
+                    setNextStep={setNextStep}
+                    reportCheck={reportCheck}
                     ></StepWizard>
                 </Box>
                 <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="lg" fullWidth
@@ -600,7 +681,7 @@ export default function FileInterface() {
                                 colHeaders: true,
                                 readOnly: true,
                                 width: '100%',
-                                maxCols: (selectedType==1||selectedType==2)?7:6,
+                                maxCols: (selectedType===1||selectedType===2)?7:(selectedType===3&&quarter!==1?8:6),
                                 height: 300,
                                 licenseKey: 'non-commercial-and-evaluation',
                                 mergeCells: mergesRef.current,
@@ -656,5 +737,4 @@ export default function FileInterface() {
             </div>
         </TableHearder>
     );
-
 }

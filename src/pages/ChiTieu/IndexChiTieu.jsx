@@ -25,15 +25,6 @@ const ChitieuIndex = () => {
                     </div>
                     <h3 class="text-xl font-bold text-gray-800 mb-2">Các trường Chỉ tiêu</h3>
                 </Link >
-
-                <Link to="/kehoach" class="bg-white rounded-lg shadow-md p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col items-center justify-center flex-1 min-w-[250px] max-w-[300px] ">
-                    <div class="w-15 h-15 mb-5 flex items-center justify-center">
-                        <GiPackedPlanks class=" text-black-500 text-7xl" />
-                        <i class="fas fa-home text-blue-500 text-4xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Nhập số kế hoạch báo cáo</h3>
-                </Link >
-
                 <Link to="/" class="bg-white rounded-lg shadow-md p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col items-center justify-center flex-1 min-w-[250px] max-w-[300px] ">
                     <div class="w-15 h-15 mb-5 flex items-center justify-center">
                         <MdOutlineKeyboardReturn  class=" text-black-500 text-7xl" />
