@@ -109,7 +109,7 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
             const response = await api.post(`/kehoach-current`, {year,id_xa:JSON.parse(localStorage.getItem("username")).id_xa });
             const tables = [];
             const rawData = response.data.data;
-            console.log(rawData);
+            // console.log(rawData);
             let currentGroup = [];
             for (const chitieu of rawData) {
                 currentGroup.push(chitieu);
