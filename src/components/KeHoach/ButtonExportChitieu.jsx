@@ -126,7 +126,7 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
                 let headerRow05 = [];
                 let headerRow06 = [];
                 headerRow05=[1, 2, 3, 4];
-                headerRow06=['STT', 'Tên chỉ tiêu', 'Đơn vị', 'Lũy kế cùng kỳ năm trước'];
+                headerRow06=['STT', 'Tên chỉ tiêu', 'Đơn vị', `Kế hoạch chỉ tiêu năm ${year}`];
                 data.push(headerRow01, headerRow02, headerRow03, headerRow04, headerRow05,headerRow06);
                 group.forEach((ct, index) => {
                     const row = [
@@ -180,7 +180,6 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
                     }
                 });
             });
-
             worksheet.columns.forEach((column) => {
                 column.alignment = {
                     vertical: 'middle',
@@ -255,10 +254,11 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
             onClick={exportToExcelFile}
             variant="contained"
             color="primary"
+            sx={{ height: 56 }}
             startIcon={<FileDownloadIcon />}
             // sx={{ mt: 2 }}
         >
-            Tải file Báo cáo
+            Tải file kế hoạch chỉ tiêu
         </Button>
     );
 };

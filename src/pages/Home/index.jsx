@@ -66,7 +66,7 @@ const Home = () => {
                         <FaFileUpload class=" text-black-500 text-7xl" />
                         <i class="fas fa-home text-blue-500 text-4xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Nhập báo cáo tải file lên</h3>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Nhập báo cáo tải File lên</h3>
 
                 </Link >
                 )}
@@ -76,7 +76,7 @@ const Home = () => {
                             <GiPackedPlanks class=" text-black-500 text-7xl" />
                             <i class="fas fa-home text-blue-500 text-4xl"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Nhập kết hoạch</h3>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Nhập kế hoạch chỉ tiêu</h3>
                     </Link >
                 )}
             {role==="client"&&

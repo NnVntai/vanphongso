@@ -214,12 +214,14 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
         setError(null);
         let NameFileDownload="";
         try {
-            const response = await api.get(`/chitieu`, {});
+            // const response = await api.get(`/chitieu`, {});
+            const response = await api.post(`/kehoach-current`, {year,id_xa:JSON.parse(localStorage.getItem("username")).id_xa });
+            console.log(response.data.data);
             const tables = [];
-            const rawData = response.data;
+            const rawData = response.data.data;
             let currentGroup = [];
-            for (const chitieu of rawData) {
-                currentGroup.push(chitieu);
+            for (const [index, chitieu] of rawData.entries()) {
+                 currentGroup.push(chitieu);
             }
             if (currentGroup.length > 0) tables.push(currentGroup);
             const preparedData = tables.map((group, idx) => {
@@ -278,7 +280,7 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                             // ct.dvt,
                             (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
                             (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(4))} ` : null,
-                            (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(5))} ` :null,
+                            (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(5))} ` :  ct.kehoachs[0]?.kehoach??null,
                             (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(6))} ` :null,
                         ];
                         row._id=ct.id;
@@ -297,7 +299,7 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                             (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
                             (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(4))} ` : null,
                             (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(5))} ` :null,
-                            (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(6))} ` :null,
+                            (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(6))} ` :ct.kehoachs[0]?.kehoach??null,
                             (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(7))} ` :null,
                             (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(8))} ` :null,
 
@@ -541,18 +543,25 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
         setError(null);
         let NameFileDownload="";
         try {
-            console.log(year,idLoai,month,week,id_xa);
+            // console.log(year,idLoai,month,week,id_xa);
             const response = await api.post('/chitieu/sumtichly', {year: year, id_loaibaocao: idLoai, month: month, id_xa: id_xa,});
+            const responsePlan  = await api.post(`/kehoach-current`, {year,id_xa:JSON.parse(localStorage.getItem("username")).id_xa });
             const tables = [];
             const rawData = response.data?.data || [];
-            console.log(rawData);
+            const rawPlanData = responsePlan.data?.data || [];
             let currentGroup = [];
-            for (const chitieu of rawData) {currentGroup.push(chitieu);}
+            for (const [index, chitieu] of rawData.entries()) {
+                const matched = rawPlanData.find(kh => chitieu.id === kh.id);
+                // console.log(matched);
+                chitieu.kehoachs = matched.kehoachs;
+
+                currentGroup.push(chitieu);
+            }
+            console.log(currentGroup);
             if (currentGroup.length > 0) tables.push(currentGroup);
             const preparedData = tables.map((group, idx) => {
-                // const xaList = group[0].xa.map((x) => x.ten_xa);
                 const data = [];
-
+9
                 const headerRow01 = [""];
                 const headerRow02 = [""];
                 let headerRow03 = [""];
@@ -590,7 +599,7 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                             // ct.dvt,
                             (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
                             (formularweek[index] && formularweek[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,8), "E", getExcelAlpha(4))} ` : null,
-                            (formularweek[index] && formularweek[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,8), "E", getExcelAlpha(5))} ` : null,
+                            (formularweek[index] && formularweek[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,8), "E", getExcelAlpha(5))} ` : ct.kehoachs[0]?.kehoach??null,
                             (formularweek[index] && formularweek[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,8), "E", getExcelAlpha(6))} ` :null,
                             (formularweek[index] && formularweek[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,8), "E", getExcelAlpha(7))} ` :
                             (ct.is_active)?`=${getExcelAlpha(6)}${index + 9}+`+ ct.total_value2:null,
@@ -602,7 +611,7 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                             // ct.dvt,
                            (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
                             (formularjson[index] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(4))} ` : null,
-                            (formularjson[index] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(5))} ` : null,
+                            (formularjson[index] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(5))} ` : ct.kehoachs[0]?.kehoach??null,
                             (formularjson[index] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(6))} ` :null,
                             (formularjson[index] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(7))} ` :
                                 ( ct.is_active)?`=${getExcelAlpha(6)}${index+9}+`+ ct.total_value2:null,

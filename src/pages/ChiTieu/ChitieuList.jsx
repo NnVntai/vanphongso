@@ -12,6 +12,7 @@ import {
   Button,
   Modal,
   IconButton,
+    Dialog, DialogTitle, DialogContent, DialogActions,
   Box,
 } from "@mui/material";
 // import Select from "react-select";
@@ -22,6 +23,7 @@ import api from "@/config";
 import { Link } from "react-router-dom";
 import  TableHearder from '../../components/Table/TableHearder';
 // import {MenuItem} from "@mui/material";
+import { Info } from "lucide-react";
 
 const stubRow = (stt) => ({
   id: null,
@@ -38,8 +40,11 @@ export default function ChitieuList() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+    const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedFileType, setSelectedFileType] = useState(0);
   const [fileTypes, setFileTypes] = useState([]);
+const [openDialog, setOpenDialog] = useState(false);
+const [selectedRow, setSelectedRow] = useState(null);
   const fetchFileTypes = async () => {
     try {
       const { data } = await api.get("/loaibaocao");
@@ -80,11 +85,22 @@ export default function ChitieuList() {
     [clone[index], clone[target]] = [clone[target], clone[index]];
     setRows(renumber(clone));
   };
+    const handleOpen = (row) => {
+        setSelectedRow(row);
+        setOpenDialog(true);
+    };
 
+    const handleClose = () => {
+        setOpenDialog(false);
+        setSelectedRow(null);
+    };
   const handleChange = (index, field, value) => {
     const clone = [...rows];
     clone[index] = { ...clone[index], [field]: value };
     setRows(clone);
+      if (selectedIndex === index) {
+          setSelectedRow((prev) => ({ ...prev, [field]: value }));
+      }
   };
 
   /* --------------------------- ⬇ SAVE ALL ⬇ --------------------------- */
@@ -125,7 +141,14 @@ export default function ChitieuList() {
     clone.splice(index, 1);
     setRows(renumber(clone));
   };
-
+const handleAddBelow = (index) => {
+        setRows((prev) => {
+            const newRow = stubRow(prev.length + 1);
+            const updated = [...prev];
+            updated.splice(index + 1, 0, newRow); // ✅ chèn ngay sau dòng hiện tại
+            return updated;
+        });
+};
   const handleAdd = () => setRows((prev) => [...prev, stubRow(prev.length + 1)]);
 
   /* ---------------------------- Render UI ---------------------------- */
@@ -138,22 +161,8 @@ export default function ChitieuList() {
 
   return (
       <TableHearder title="Danh sách các chỉ tiêu">
-     
-
         {/* Body */}
         <div className="p-4 mx-auto space-y-4 bg-white">
-          {/*<h1 className="text-xl font-bold">Danh sách chỉ tiêu</h1>*/}
-                  <Grid item xs={12} sm={4} sx={{ minWidth: 150 }}>
-                      <FormControl fullWidth><InputLabel>Khóa chỉ tiêu theo loại</InputLabel>
-                          <MUISelect  label="Khóa chỉ tiêu theo loại"  value={selectedFileType} onChange={(e) => setSelectedFileType(e.target.value)}>
-                            <MenuItem value="0">Tất cả</MenuItem>
-                            {fileTypes.map((type) => (
-                                <MenuItem key={type.id} value={type.id}>{type.name}</MenuItem>
-                            ))}
-                          </MUISelect>
-                      </FormControl>
-                  </Grid>
-          {/* Table */}
           <div className="overflow-x-auto rounded-2xl shadow">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -162,122 +171,118 @@ export default function ChitieuList() {
                 <th className="px-3 py-2 text-left text-sm font-medium">Mã chỉ tiêu</th>
                 <th className="px-3 py-2 text-left text-sm font-medium">Tên chỉ tiêu</th>
                 <th className="px-3 py-2 text-left text-sm font-medium">Đơn vị</th>
-                {/*<th className="px-3 py-2 text-left text-sm font-medium">Công thức</th>*/}
-                {/*<th className="px-3 py-2 text-left text-sm font-medium">Đơn vị</th>*/}
-                <th className="px-3 py-2 text-center text-sm font-medium">có trường dữ liệu</th>
-                <th className="px-3 py-2 text-center text-sm font-medium">Khóa(Block)</th>
-                <th
-                    className="px-3 py-2 text-sm font-medium text-center"
-                    colSpan={3}
-                >
-                  Hành động
-                </th>
+                {/*<th className="px-3 py-2 text-center text-sm font-medium">Cho phép nhập</th>*/}
+                <th className="px-3 py-2 text-center text-sm font-medium w-[250px]">nút chức năng</th>
+                <th className="px-3 py-2 text-sm font-medium text-center w-[250px]" colSpan={3}>Hành động</th>
               </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
               <AnimatePresence initial={false}>
-                {rows.map((row, idx) => (
-                    <motion.tr
-                        key={row.id ?? `new-${idx}`}
-                        exit={{ opacity: 0, y: -10 }}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.15 }}
-                        className="bg-white hover:bg-gray-50"
-                    >
-                      <td className="px-3 py-1 text-sm text-center w-14">
-                        {idx + 1}
-                      </td>
-                      <td className="px-3 py-1 w-40">
-                        <input
-                            type="text"
-                            className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-                            value={row.ma_chitieu}
-                            onChange={(e) =>
-                                handleChange(idx, "ma_chitieu", e.target.value)
-                            }
-                        />
-                      </td>
-                      <td className="px-3 py-1">
-                        <input
-                            type="text"
-                            className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-                            value={row.ten_chitieu}
-                            onChange={(e) =>
-                                handleChange(idx, "ten_chitieu", e.target.value)
-                            }
-                        />
-                      </td>
-                      <td className="px-3 py-1 w-32">
-                        <input
-                            type="text"
-                            className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-                            value={row.dvt}
-                            onChange={(e) => handleChange(idx, "dvt", e.target.value)}
-                        />
-                      </td>
-                      {/*<td className="px-3 py-1">*/}
-                      {/*  <Select*/}
-                      {/*      isMulti*/}
-                      {/*      options={options}*/}
-                      {/*      className="text-sm"*/}
-                      {/*      value={options.filter((opt) =>*/}
-                      {/*          row.formular?.includes(opt.value)*/}
-                      {/*      )}*/}
-                      {/*      onChange={(selected) => {*/}
-                      {/*        const selectedValues = selected.map((opt) => opt.value);*/}
-                      {/*        handleChange(idx, "formular", selectedValues);*/}
-                      {/*      }}*/}
-                      {/*  />*/}
-                      {/*</td>*/}
-                      <td className="px-3 py-1 text-center w-20">
-                        <input
-                            type="checkbox"
-                            className="h-4 w-4"
-                            checked={row.is_active}
-                            onChange={(e) =>
-                                handleChange(idx, "is_active", e.target.checked)
-                            }
-                        />
-                        </td>
-                        <td className="px-3 py-1 text-center w-20">
-                          <input
-                              type="checkbox"
-                              className="h-4 w-4"
-                              checked={row.block}
-                              onChange={(e) =>
-                                  handleChange(idx, "is_block", e.target.block)
-                              }
-                          />
-                      </td>
-                      <td className="px-1 py-1 text-center w-10">
-                        <button
-                            onClick={() => moveRow(idx, -1)}
-                            className="p-1 hover:bg-gray-200 rounded"
-                            disabled={idx === 0}
-                        >
-                          <ArrowUp size={16} />
-                        </button>
-                      </td>
-                      <td className="px-1 py-1 text-center w-10">
-                        <button
-                            onClick={() => moveRow(idx, 1)}
-                            className="p-1 hover:bg-gray-200 rounded"
-                            disabled={idx === rows.length - 1}
-                        >
-                          <ArrowDown size={16} />
-                        </button>
-                      </td>
-                      <td className="px-1 py-1 text-center w-10">
-                        <button
-                            onClick={() => handleDelete(idx)}
-                            className="p-1 hover:bg-red-100 rounded"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </td>
-                    </motion.tr>
-                ))}
+                  {rows.map((row, idx) => (
+                      <motion.tr
+                          key={row.id ?? `new-${idx}`}
+                          exit={{ opacity: 0, y: -10 }}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.1 }}
+                          className="bg-white hover:bg-gray-50 border-b border-gray-100 text-[13px]"
+                      >
+                          {/* STT */}
+                          <td className="px-1 py-0.5 text-center w-10">{idx + 1}</td>
+
+                          {/* Mã chỉ tiêu */}
+                          <td className="px-1 py-0.5 w-[90px]">
+                              <input
+                                  type="text"
+                                  className="w-full border border-gray-200 rounded px-1 py-[2px] text-[13px] focus:ring-1 focus:ring-blue-300 focus:outline-none"
+                                  value={row.ma_chitieu}
+                                  onChange={(e) => handleChange(idx, "ma_chitieu", e.target.value)}
+                              />
+                          </td>
+
+                          {/* Tên chỉ tiêu */}
+                          <td className="px-1 py-0.5 min-w-[150px]">
+                              <input
+                                  type="text"
+                                  className="w-full border border-gray-200 rounded px-1 py-[2px] text-[13px] focus:ring-1 focus:ring-blue-300 focus:outline-none"
+                                  value={row.ten_chitieu}
+                                  onChange={(e) => handleChange(idx, "ten_chitieu", e.target.value)}
+                              />
+                          </td>
+
+                          {/* ĐVT */}
+                          <td className="px-1 py-0.5 w-[70px]">
+                              <input
+                                  type="text"
+                                  className="w-full border border-gray-200 rounded px-1 py-[2px] text-[13px] focus:ring-1 focus:ring-blue-300 focus:outline-none"
+                                  value={row.dvt}
+                                  onChange={(e) => handleChange(idx, "dvt", e.target.value)}
+                              />
+                          </td>
+
+                          {/* Hoạt động */}
+                          {/*<td className="px-1 py-0.5 text-center w-[45px]">*/}
+                          {/*    <input*/}
+                          {/*        type="checkbox"*/}
+                          {/*        className="h-3.5 w-3.5 accent-green-500"*/}
+                          {/*        checked={row.is_active}*/}
+                          {/*        onChange={(e) =>*/}
+                          {/*            handleChange(idx, "is_active", e.target.checked)*/}
+                          {/*        }*/}
+                          {/*    />*/}
+                          {/*</td>*/}
+
+                          {/*/!* Khóa *!/*/}
+                          <td className="px-1 py-0.5 text-center w-[100px]">
+                              <button
+                                  onClick={() => handleOpen(row)}
+                                  className={`p-1 mx-1 rounded text-xs font-medium transition-all
+                ${selectedRow?.id === row.id
+                                      ? "bg-blue-600 text-white"              // ✅ đang chọn
+                                      : "bg-blue-50 text-blue-600 hover:bg-blue-100" // 🌈 mặc định + hover
+                                  }`}
+                              >
+                                  <Info size={14} className="inline-block mr-1" />
+                                  Chi tiết
+                              </button>
+                              <button
+                                  onClick={() => handleAddBelow(idx)}
+                                  className="p-1 bg-blue-50 mx-1 hover:bg-blue-100 text-blue-600 rounded text-xs"
+                              >
+                                  + Thêm dòng dưới
+                              </button>
+                          </td>
+
+                          {/* Hành động */}
+                          <td className="px-1 py-1  text-center w-[100px]">
+                              <div className="flex justify-center gap-0.5">
+                                  <button
+                                      onClick={() => moveRow(idx, -1)}
+                                      className="p-1 hover:bg-gray-200 rounded disabled:opacity-30 w-[25px]"
+                                      disabled={idx === 0}
+                                      title="Lên"
+                                  >
+                                      <ArrowUp size={13} />
+                                  </button>
+                                  <button
+                                      onClick={() => moveRow(idx, 1)}
+                                      className="p-1 hover:bg-gray-200 rounded disabled:opacity-30 w-[25px]"
+                                      disabled={idx === rows.length - 1}
+                                      title="Xuống"
+                                  >
+                                      <ArrowDown size={13} />
+                                  </button>
+                                  <button
+                                      onClick={() => handleDelete(idx)}
+                                      className="p-1 hover:bg-red-100 rounded text-red-600 w-[25px]"
+                                      title="Xóa"
+                                  >
+                                      <Trash2 size={13} />
+                                  </button>
+                              </div>
+                          </td>
+                      </motion.tr>
+                  ))}
               </AnimatePresence>
               </tbody>
             </table>
@@ -301,6 +306,75 @@ export default function ChitieuList() {
                 </button>
             )}
           </div>
+            <Dialog open={openDialog} onClose={handleClose} maxWidth="sm" fullWidth>
+                <DialogTitle>Thông tin chi tiết</DialogTitle>
+                <DialogContent dividers>
+                    {selectedRow ? (
+                            <div className="space-y-2 text-sm">
+                                <div>
+                                    <label className="font-semibold">Mã chỉ tiêu:</label>
+                                    <input
+                                        type="text"
+                                        className="w-full border rounded px-2 py-1 text-sm"
+                                        value={selectedRow.ma_chitieu}
+                                        disabled={true}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="font-semibold">Tên chỉ tiêu:</label>
+                                    <input
+                                        type="text"
+                                        className="w-full border rounded px-2 py-1 text-sm"
+                                        value={selectedRow.ten_chitieu}
+                                        disabled={true}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="font-semibold">Đơn vị:</label>
+                                    <input
+                                        type="text"
+                                        className="w-full border rounded px-2 py-1 text-sm"
+                                        value={selectedRow.dvt}
+                                        disabled={true}
+                                    />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        className="h-4 w-4 accent-green-500"
+                                        checked={selectedRow.is_active}
+                                        onChange={(e) => handleChange(selectedIndex, "is_active", e.target.checked)}
+                                    />
+                                    <span>Hoạt động</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        className="h-4 w-4 accent-green-500"
+                                        checked={selectedRow.is_active}
+                                        onChange={(e) => handleChange(selectedIndex, "is_active", e.target.checked)}
+                                    />
+                                    <span>Chu kỳ Từ 1/10 đến 30/9</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        className="h-4 w-4 accent-green-500"
+                                        checked={selectedRow.is_active}
+                                        onChange={(e) => handleChange(selectedIndex, "is_active", e.target.checked)}
+                                    />
+                                    <span>Nhập tuần</span>
+                                </div>
+                            </div>
+
+                    ) : (
+                        <p>Không có dữ liệu</p>
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Đóng</Button>
+                </DialogActions>
+            </Dialog>
         </div>
 
       </TableHearder>

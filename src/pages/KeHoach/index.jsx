@@ -22,7 +22,7 @@ const Home = () => {
                             < PiMicrosoftExcelLogo class=" text-black-500 text-7xl" />
                             <i class="fas fa-home text-blue-500 text-4xl"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Nhập kế hoạch bằng File Excel</h3>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Nhập kế hoạch chỉ tiêu bằng File Excel</h3>
 
                     </Link >)}
 

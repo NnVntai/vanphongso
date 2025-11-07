@@ -172,55 +172,102 @@ export default function FileInterface() {
         }
     }
     return (
-        <TableHearder title="Nộp báo cáo theo file tải lên">
-            <div className="bg-amber-50">
-                <Box maxWidth="sm"  mx="auto" p={3}>
-                    <Grid container spacing={2} mt={2}>
-                        <Grid item xs={12} sm={4} sx={{ minWidth: 150 }}>
-                            <FormControl fullWidth><InputLabel>Năm</InputLabel>
-                                <Select label="Năm" value={year} onChange={(e) => setYear(e.target.value)}>{years.map(y => (
-                                    <MenuItem key={y} value={y}>Năm {y}</MenuItem>))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
+        <TableHearder title="Nộp kế hoạch chỉ tiêu theo file tải lên">
+            <Box className="bg-amber-50" p={3}>
+                <Grid container spacing={3} justifyContent="center">
+
+                    {/* 1. CHỌN NĂM */}
+                    <Grid item xs={12} sm={4}>
+                        <FormControl fullWidth>
+                            <InputLabel>Năm</InputLabel>
+                            <Select
+                                label="Năm"
+                                value={year}
+                                onChange={(e) => setYear(e.target.value)}
+                            >
+                                {years.map((y) => (
+                                    <MenuItem key={y} value={y}>Năm {y}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Grid>
-                    <Grid container spacing={3} mt={3}>
-                        <Grid item xs={6}>
-                            <ButtonExportChiTieu
-                                year={year}
-                                outputFileName={`KeHoach_TTDLNongNghiep_${year}.xlsx`}
-                                apiEndpoint="/chitieu"
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <input type="file" ref={inputRef} style={{ display: 'none' }} onChange={handleFileChange} />
-                            <Button fullWidth variant="contained" startIcon={<UploadFileIcon />} onClick={handleClick}>Tải lên</Button>
-                            {fileName && <Typography variant="caption" color="success.main">Đã chọn: {fileName}</Typography>}
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button fullWidth color="success" variant="contained"  onClick={() => {
-                                if ( !year) {
+
+                    {/* 2. NÚT TẢI FILE MẪU */}
+                    <Grid item xs={12} sm={6} md={4}>
+                        <ButtonExportChiTieu
+                            fullWidth
+                            year={year}
+                            outputFileName={`KeHoach_TTDLNongNghiep_${year}.xlsx`}
+                            apiEndpoint="/chitieu"
+                            label="📄 Tải file mẫu kế hoạch"
+                        />
+                    </Grid>
+
+                    {/* 3. NÚT TẢI LÊN FILE */}
+                    <Grid item xs={12} sm={6} md={4}>
+                        <input
+                            type="file"
+                            ref={inputRef}
+                            style={{ display: "none" }}
+                            onChange={handleFileChange}
+                        />
+                        <Button
+                            fullWidth
+                            variant="outlined"
+                            startIcon={<UploadFileIcon />}
+                            onClick={handleClick}
+                            sx={{ height: 56 }}
+                        >
+                            📤 Chọn file k hoạch chỉ tiêu
+                        </Button>
+                        {fileName && (
+                            <Typography
+                                variant="caption"
+                                color="success.main"
+                                sx={{ display: "block", textAlign: "center", mt: 1 }}
+                            >
+                                ✅ Đã chọn: {fileName}
+                            </Typography>
+                        )}
+                    </Grid>
+
+                    {/* 4. NÚT NỘP BÁO CÁO */}
+                    <Grid item xs={12} sm={8} md={6}>
+                        <Button
+                            fullWidth
+                            color="success"
+                            variant="contained"
+                            sx={{ height: 56 }}
+                            size="large"
+                            onClick={() => {
+                                if (!year) {
                                     confirmAlert({
-                                        title: 'Thiếu thông tin',
-                                        message: '⚠️ Vui lòng chọn đầy đủ loại báo cáo và thời gian.',
-                                        buttons: [
-                                            { label: 'OK', onClick: () => {} }
-                                        ]
+                                        title: "Thiếu thông tin",
+                                        message: "⚠️ Vui lòng chọn năm trước khi nộp báo cáo.",
+                                        buttons: [{ label: "OK" }],
                                     });
                                     return;
                                 }
                                 setOpenDialog(true);
-                            }} >📤 Nộp báo cáo</Button>
-                        </Grid>
+                            }}
+                        >
+                            🚀 nộp kế hoạch chỉ tiêu
+                        </Button>
                     </Grid>
-                </Box>
+                </Grid>
+            </Box>
 
-                <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="lg" fullWidth   TransitionComponent={Fade} TransitionProps={{
+            {/* DIALOG XEM TRƯỚC */}
+            <Dialog
+                open={openDialog}
+                onClose={() => setOpenDialog(false)}
+                maxWidth="lg"
+                fullWidth
+                TransitionComponent={Fade}
+                TransitionProps={{
                     onEntered: () => {
-                        // console.log(mergesRef);
                         const container = document.getElementById("handsontable-preview");
                         if (container && previewData.length > 0) {
-                            // Xoá handsontable cũ nếu có
                             if (container.handsontableInstance) {
                                 container.handsontableInstance.destroy();
                             }
@@ -230,53 +277,46 @@ export default function FileInterface() {
                                 rowHeaders: true,
                                 colHeaders: true,
                                 readOnly: true,
-                                width: '100%',
+                                width: "100%",
                                 height: 300,
-                                licenseKey: 'non-commercial-and-evaluation',
+                                licenseKey: "non-commercial-and-evaluation",
                                 mergeCells: mergesRef.current,
-                                cells: function (row, col) {
-                                    const cellProperties = {};
-                                    cellProperties.className = 'htCenter htMiddle'; // center text
-                                    return cellProperties;
-                                },
-
-                                // customBorders: [
-                                //     {
-                                //         range: {
-                                //             from: { row: 0, col: 0 },
-                                //             to: { row: 9, col: previewData[0]?.length - 1 || 4 },
-                                //         },
-                                //         top: { width: 1, color: '#000' },
-                                //         left: { width: 1, color: '#000' },
-                                //         bottom: { width: 1, color: '#000' },
-                                //         right: { width: 1, color: '#000' },
-                                //     }
-                                // ]
+                                cells: () => ({ className: "htCenter htMiddle" }),
                             });
 
-                            // Gán lại instance để destroy lần sau
                             container.handsontableInstance = hot;
                         }
-                    }}}>
-                    <DialogTitle>Xác nhận nộp báo cáo</DialogTitle>
-                    <DialogContent>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} md={6}>
-                                <Typography><strong>Năm:</strong> {year}</Typography>
-                                <Typography><strong>File:</strong> {fileName}</Typography>
-                            </Grid>
-                            <Grid item xs={12} md={6} class="w-full">
-                                <Typography><strong>Nội dung báo cáo (10 dòng đầu):</strong></Typography>
-                                <Box id="handsontable-preview" class="w-full overflowX "  />
-                            </Grid>
+                    },
+                }}
+            >
+                <DialogTitle>Xác nhận nộp kết hoạch chỉ tiêu </DialogTitle>
+                <DialogContent>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} md={4}>
+                            <Typography><strong>Năm:</strong> {year}</Typography>
+                            <Typography><strong>File:</strong> {fileName}</Typography>
                         </Grid>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setOpenDialog(false)}>Huỷ</Button>
-                        <Button onClick={() => { handleSubmitReport(); setOpenDialog(false); }} variant="contained" color="primary">Xác nhận nộp</Button>
-                    </DialogActions>
-                </Dialog>
-            </div>
+                        <Grid item xs={12} md={8}>
+                            <Typography mb={1}><strong>Xem trước nội dung:</strong></Typography>
+                            <Box id="handsontable-preview" sx={{ width: "100%", overflowX: "auto" }} />
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenDialog(false)}>Huỷ</Button>
+                    <Button
+                        onClick={() => {
+                            handleSubmitReport();
+                            setOpenDialog(false);
+                        }}
+                        variant="contained"
+                        color="primary"
+                    >
+                        Xác nhận nộp
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </TableHearder>
+
     );
 }
