@@ -85,9 +85,12 @@ const [selectedRow, setSelectedRow] = useState(null);
     [clone[index], clone[target]] = [clone[target], clone[index]];
     setRows(renumber(clone));
   };
-    const handleOpen = (row) => {
+    const handleOpen = (row,index) => {
+        // console.log(row)
         setSelectedRow(row);
         setOpenDialog(true);
+        setSelectedIndex(index); 
+
     };
 
     const handleClose = () => {
@@ -171,8 +174,9 @@ const handleAddBelow = (index) => {
                 <th className="px-3 py-2 text-left text-sm font-medium">Mã chỉ tiêu</th>
                 <th className="px-3 py-2 text-left text-sm font-medium">Tên chỉ tiêu</th>
                 <th className="px-3 py-2 text-left text-sm font-medium">Đơn vị</th>
-                {/*<th className="px-3 py-2 text-center text-sm font-medium">Cho phép nhập</th>*/}
-                <th className="px-3 py-2 text-center text-sm font-medium w-[250px]">nút chức năng</th>
+                <th className="px-3 py-2 text-center text-sm font-medium w-[100px]">Cho phép nhập</th>
+                <th className="px-3 py-2 text-center text-sm font-medium w-[100px]">Hiện báo cáo</th>
+                <th className="px-3 py-2 text-center text-sm font-medium w-[250px]">Nút chức năng</th>
                 <th className="px-3 py-2 text-sm font-medium text-center w-[250px]" colSpan={3}>Hành động</th>
               </tr>
               </thead>
@@ -219,25 +223,17 @@ const handleAddBelow = (index) => {
                                   onChange={(e) => handleChange(idx, "dvt", e.target.value)}
                               />
                           </td>
-
-                          {/* Hoạt động */}
-                          {/*<td className="px-1 py-0.5 text-center w-[45px]">*/}
-                          {/*    <input*/}
-                          {/*        type="checkbox"*/}
-                          {/*        className="h-3.5 w-3.5 accent-green-500"*/}
-                          {/*        checked={row.is_active}*/}
-                          {/*        onChange={(e) =>*/}
-                          {/*            handleChange(idx, "is_active", e.target.checked)*/}
-                          {/*        }*/}
-                          {/*    />*/}
-                          {/*</td>*/}
-
-                          {/*/!* Khóa *!/*/}
+                          <td className="px-1 py-0.5 w-[70px]">
+                              <td>{row.is_active?"Nhập":"Không nhập"}</td>
+                          </td>
+                          <td className="px-1 py-0.5 w-[70px]">
+                              <td>{row.is_week?"Báo cáo tuần":"Tất cả"}</td>
+                          </td>
                           <td className="px-1 py-0.5 text-center w-[100px]">
                               <button
-                                  onClick={() => handleOpen(row)}
+                                  onClick={() => handleOpen(row,idx)}
                                   className={`p-1 mx-1 rounded text-xs font-medium transition-all
-                ${selectedRow?.id === row.id
+                                         ${selectedRow?.id === row.id
                                       ? "bg-blue-600 text-white"              // ✅ đang chọn
                                       : "bg-blue-50 text-blue-600 hover:bg-blue-100" // 🌈 mặc định + hover
                                   }`}
@@ -345,14 +341,14 @@ const handleAddBelow = (index) => {
                                         checked={selectedRow.is_active}
                                         onChange={(e) => handleChange(selectedIndex, "is_active", e.target.checked)}
                                     />
-                                    <span>Hoạt động</span>
+                                    <span>Cho phép nhập số liệu</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <input
                                         type="checkbox"
                                         className="h-4 w-4 accent-green-500"
-                                        checked={selectedRow.is_active}
-                                        onChange={(e) => handleChange(selectedIndex, "is_active", e.target.checked)}
+                                        checked={selectedRow.writte_309}
+                                        onChange={(e) => handleChange(selectedIndex, "writte_309", e.target.checked)}
                                     />
                                     <span>Chu kỳ Từ 1/10 đến 30/9</span>
                                 </div>
@@ -360,10 +356,10 @@ const handleAddBelow = (index) => {
                                     <input
                                         type="checkbox"
                                         className="h-4 w-4 accent-green-500"
-                                        checked={selectedRow.is_active}
-                                        onChange={(e) => handleChange(selectedIndex, "is_active", e.target.checked)}
+                                        checked={selectedRow.is_week}
+                                        onChange={(e) => handleChange(selectedIndex, "is_week", e.target.checked)}
                                     />
-                                    <span>Nhập tuần</span>
+                                    <span>Hiển thị ở báo cáo tuần</span>
                                 </div>
                             </div>
 
