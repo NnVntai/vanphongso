@@ -46,55 +46,150 @@ export default function FileInterface() {
         }
         return String(value);
     };
+    // const handleFileChange = async (event) => {
+    //     const file = event.target.files[0];
+    //     if (file) {
+    //         setFileName(file.name);
+    //         const reader = new FileReader();
+    //         reader.onload = async (e) => {
+    //             const workbook = new ExcelJS.Workbook();
+    //             await workbook.xlsx.load(e.target.result);
+             
+    //             const worksheet = workbook.worksheets[0];
+                
+    //             const jsonData = [];
+    //             const totalRows = worksheet.rowCount;
+
+    //             for (let i = 1; i <= totalRows; i++) {
+    //                 const row = worksheet.getRow(i);
+    //                 const rowData = [];
+    //                 for (let j = 1; j <= row.cellCount; j++) {
+    //                     const cell = row.getCell(j);
+    //                     const val = cell.value;
+    //                     // let finalValue = "";
+    //                     if (val && typeof val === 'object' && val.formula !== undefined) {
+    //                         // finalValue = val.result ?? "";
+    //                         rowData.push({
+    //                                 formula: `=${val.formula}`,
+    //                                 result: val.result ?? ""
+    //                             });
+    //                     } else {
+    //                         rowData.push(val ?? "");
+    //                         // finalValue = val ?? "";
+    //                     }
+    //                 }
+    //                 // console.log(rowData);
+    //                 jsonData.push(rowData);
+    //             }
+    //             const maxCols = Math.max(...jsonData.map((row) => row.length));
+    //             const normalized = jsonData.map((row) => {
+    //                 const newRow = Array.from(row);
+    //                 while (newRow.length < maxCols) {
+
+    //                     newRow.push("");
+    //                 }
+    //                 return newRow;
+    //             });
+
+    //             setPreviewData(normalized.slice(0, 500));
+    //             // Xóa Luckysheet cũ (nếu có)
+    //             const merges = [];
+    //             const mergeRanges = worksheet.model?.merges || [];
+    //             mergeRanges.forEach((rangeStr) => {
+    //                 const [start, end] = rangeStr.split(':');
+    //                 const startCell = worksheet.getCell(start);
+    //                 const endCell = worksheet.getCell(end);
+    //                 merges.push({
+    //                     row: startCell.row - 1,
+    //                     col: startCell.col - 1,
+    //                     rowspan: endCell.row - startCell.row + 1,
+    //                     colspan: endCell.col - startCell.col + 1,
+    //                 });
+    //             });
+
+    //             mergesRef.current = merges;
+    //             try {
+    //                 let previrewExcel=jsonData.slice(5, 500);
+    //                 console.log(previrewExcel);
+
+    //                 for (let i = 0; i < previrewExcel.length; i++) {
+    //                     if(previrewExcel[i][3] && typeof previrewExcel[i][3] === 'object' && previrewExcel[i][3].formula !== undefined)
+    //                     {
+    //                         datapost.current.push(
+    //                         {
+    //                             id_chitieu: previrewExcel[i][4]??"",
+    //                             formular: toValidString(previrewExcel[i][3].formula),
+    //                         })
+    //                     }
+                        
+    //                 }
+    //             } catch (e) {
+    //                 console.error("Lỗi khi tải cấu trúc tiệp:", e);
+    //             }
+    //         };
+    //         reader.readAsArrayBuffer(file);
+    //     }
+    // };
     const handleFileChange = async (event) => {
         const file = event.target.files[0];
-        if (file) {
-            setFileName(file.name);
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const workbook = new ExcelJS.Workbook();
-                await workbook.xlsx.load(e.target.result);
-             
-                const worksheet = workbook.worksheets[0];
+        if (!file) return;
+
+        setFileName(file.name);
+        const reader = new FileReader();
+
+        reader.onload = async (e) => {
+            const workbook = new ExcelJS.Workbook();
+            await workbook.xlsx.load(e.target.result);
+
+            const jsonDataAllSheets = [];
+
+            // Duyệt qua toàn bộ sheet
+            workbook.worksheets.forEach((worksheet, sheetIndex) => {
+                const sheetName = worksheet.name;
                 const jsonData = [];
                 const totalRows = worksheet.rowCount;
 
                 for (let i = 1; i <= totalRows; i++) {
                     const row = worksheet.getRow(i);
                     const rowData = [];
+
                     for (let j = 1; j <= row.cellCount; j++) {
                         const cell = row.getCell(j);
                         const val = cell.value;
-                        let finalValue = "";
-                        if (val && typeof val === 'object' && val.formula !== undefined) {
-                            finalValue = val.result ?? "";
+
+                        if (val && typeof val === "object" && val.formula !== undefined) {
+                            // Nếu là công thức
+                            rowData.push({
+                                formula: `=${val.formula}`,
+                                result: val.result ?? "",
+                            });
                         } else {
-                            finalValue = val ?? "";
+                            // Nếu là giá trị thường
+                            rowData.push(val ?? "");
                         }
-                        if (typeof finalValue === "string" && !isNaN(finalValue.trim())) {
-                            finalValue = Number(finalValue.trim());
-                        }
-                        rowData.push(finalValue);
-                        // rowData.push(row.getCell(j).value ?? ""); // giữ trống nếu không có dữ liệu
                     }
-                    // console.log(rowData);
+
                     jsonData.push(rowData);
                 }
-                const maxCols = Math.max(...jsonData.map((row) => row.length));
-                const normalized = jsonData.map((row) => {
-                    const newRow = Array.from(row);
-                    while (newRow.length < maxCols) {
 
-                        newRow.push("");
-                    }
+                // Chuẩn hoá độ dài các dòng
+                const maxCols = Math.max(...jsonData.map((r) => r.length));
+                const normalized = jsonData.map((r) => {
+                    const newRow = Array.from(r);
+                    while (newRow.length < maxCols) newRow.push("");
                     return newRow;
                 });
-                setPreviewData(normalized.slice(0, 500));
-                // Xóa Luckysheet cũ (nếu có)
+
+                jsonDataAllSheets.push({
+                    sheetName,
+                    data: normalized,
+                });
+
+                // Xử lý merge nếu cần
                 const merges = [];
                 const mergeRanges = worksheet.model?.merges || [];
                 mergeRanges.forEach((rangeStr) => {
-                    const [start, end] = rangeStr.split(':');
+                    const [start, end] = rangeStr.split(":");
                     const startCell = worksheet.getCell(start);
                     const endCell = worksheet.getCell(end);
                     merges.push({
@@ -104,34 +199,87 @@ export default function FileInterface() {
                         colspan: endCell.col - startCell.col + 1,
                     });
                 });
-                // console.log(merges)
-                // Save merges to ref for later use
-                mergesRef.current = merges;
-                try {
-                    let previrewExcel=jsonData.slice(5, 500);
-                    console.log(previrewExcel);
+                // Lưu merge theo từng sheet nếu cần
+                mergesRef.current[sheetName] = merges;
+            });
 
-                    for (let i = 0; i < previrewExcel.length; i++) {
-                        if(previrewExcel[i][5]??false)
+            // 👉 Lưu sheet đầu tiên để hiển thị preview (tối đa 500 dòng)
+            if (jsonDataAllSheets.length > 0) {
+                setPreviewData(jsonDataAllSheets[0].data.slice(0, 500));
+            }
+
+            // 👉 Gom dữ liệu vào datapost.current
+            try {
+                datapost.nomal = []; // reset
+                datapost.week = []; // reset
+                // console.log(jsonDataAllSheets);
+                if(jsonDataAllSheets.length>3)
+                {
+                    for (let sheetIndex = 0; sheetIndex < 2; sheetIndex++) {
+                        if(sheetIndex===0)
                         {
-                            if(previrewExcel[i][3]!==0)
-                            {
-                                datapost.current.push(
-                                    {
-                                        id_chitieu: previrewExcel[i][4]??"",
-                                        kehoach: toValidString(previrewExcel[i][3]),
-                                        year: year,
-                                        id_xa:JSON.parse(localStorage.getItem("username")).id_xa
-                                    })
+                            const rows=jsonDataAllSheets[sheetIndex].data.slice(5, 500);
+                            for (let i = 0; i < rows.length; i++) {
+                                if(rows[i][4]!==null&&rows[i][4]!==""&&rows[i][4]!==undefined)
+                                {
+                                    // if (rows[i][3] && typeof rows[i][3] === "object" && rows[i][3].formula !== undefined) {
+                                    datapost.nomal.push({
+                                        id:rows[i][4],
+                                        formular:(jsonDataAllSheets[sheetIndex].data[i][3].formula!==undefined&&jsonDataAllSheets[sheetIndex].data[i][3].formula!=='')?jsonDataAllSheets[sheetIndex].data[i][3].formula:"",
+                                        planformular:(jsonDataAllSheets[sheetIndex+2].data[i][8].formula!==undefined&&jsonDataAllSheets[sheetIndex+2].data[i][8].formula==='')?jsonDataAllSheets[sheetIndex+2].data[i][8].formula:"",
+                                    });     
+                                }
+                                    
+                            }
+                        }else if(sheetIndex===1){
+                            const rows=jsonDataAllSheets[sheetIndex].data.slice(5, 500);
+                            for (let i = 0; i < rows.length; i++) {
+                                if(rows[i][4]!==null&&rows[i][4]!==""&&rows[i][4]!==undefined)
+                                {
+                                    // if (rows[i][3] && typeof rows[i][3] === "object" && rows[i][3].formula !== undefined) {
+                                    datapost.week.push({
+                                        id:rows[i][4],
+                                        formularweek:(jsonDataAllSheets[sheetIndex].data[i][3].formula!==undefined&&jsonDataAllSheets[sheetIndex].data[i][3].formula==='')?jsonDataAllSheets[sheetIndex].data[i][3].formula:"",
+                                        planweekformular:(jsonDataAllSheets[sheetIndex+2].data[i][8].formula!==undefined&&jsonDataAllSheets[sheetIndex+2].data[i][8].formula==='')?jsonDataAllSheets[sheetIndex+2].data[i][8].formula:"",
+                                    });     
+                                }
+                                    
                             }
                         }
                     }
-                } catch (e) {
-                    console.error("Lỗi khi tải cấu trúc tiệp:", e);
                 }
-            };
-            reader.readAsArrayBuffer(file);
-        }
+                console.log(datapost);
+                const mergedMap = new Map();
+
+                // Duyệt qua normal
+                datapost.nomal.forEach(item => {
+                    mergedMap.set(item.id, { ...item }); // tạo bản sao object
+                });
+
+                // Duyệt qua week
+                datapost.week.forEach(item => {
+                    if (mergedMap.has(item.id)) {
+                        // Nếu id đã tồn tại, merge vào object cũ
+                        Object.assign(mergedMap.get(item.id), item);
+                    } else {
+                        // Nếu id chưa có, thêm mới
+                        mergedMap.set(item.id, { ...item });
+                    }
+                });
+
+                // Chuyển Map thành array
+                datapost.merged = Array.from(mergedMap.values());
+               
+        
+                // console.log(datapost.merged);
+
+            } catch (e) {
+                console.error("Lỗi khi xử lý dữ liệu Excel:", e);
+            }
+        
+        };
+
+        reader.readAsArrayBuffer(file);
     };
     const handleSubmitReport = async () => {
         const file = inputRef.current?.files[0];

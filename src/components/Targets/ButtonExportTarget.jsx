@@ -17,10 +17,6 @@ const getExcelAlpha = (n) => {
     }
     return result;
 };
-const replaceColumnLetter = (formula, fromCol, toCol) => {
-    const regex = new RegExp(`\\b${fromCol}(\\d+)`, 'g');
-    return formula.replace(regex, `${toCol}$1`);
-};
 const setBorderForRange = (sheet, startRow, endRow, startCol, endCol) => {
     for (let row = startRow; row <= endRow; row++) {
         for (let col = startCol; col <= endCol; col++) {
@@ -72,12 +68,7 @@ const aligLeftForRange = (sheet, startRow, endRow, startCol, endCol) => {
         }
     }
 };
-const evaluateRelativeFormula = (formula, number) => {
-    return formula.replace(/([A-Z]+)(\d+)/g, (match, col, row) => {
-        const newRow = parseInt(row, 10) + number;
-        return `${col}${newRow}`;
-    });
-};
+
 const setColumnWidthsInRange = (sheet, startCol, endCol, width) => {
     for (let col = startCol; col <= endCol; col++) {
         sheet.getColumn(col).width = width;
@@ -100,29 +91,6 @@ const columnNumberToLetter = (num) => {
     }
     return letters;
 };
-function prepareSheetData(group, sheetIndex) {
-  const username = JSON.parse(localStorage.getItem("username")).xa?.ten_xa || "Người dùng";
-  const data = [];
-
-  if (sheetIndex === 0) {
-    data.push(['Sheet 1 Header', '', '', '']);
-    data.push(['Người cập nhật ' + username, '', '', '']);
-    data.push(['STT', 'Tên chỉ tiêu', 'Đơn vị', 'Công thức']);
-    group.forEach((ct, idx) => data.push([idx + 1, ct.ten_chitieu, ct.dvt, '']));
-  } 
-  else if (sheetIndex === 1) {
-    data.push(['Tổng hợp năm', '', '', '', '']);
-    data.push(['STT', 'Tên chỉ tiêu', 'ĐVT', 'Giá trị', 'Ghi chú']);
-    group.forEach((ct, idx) => data.push([idx + 1, ct.ten_chitieu, ct.dvt, '', '']));
-  } 
-  else if (sheetIndex === 2) {
-    data.push(['Báo cáo quý', '', '', '']);
-    data.push(['Tên', 'ĐVT', 'Tháng 1', 'Tháng 2']);
-    group.forEach((ct) => data.push([ct.ten_chitieu, ct.dvt, '', '']));
-  }
-
-  return data;
-}
 
 
 
@@ -253,7 +221,7 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
                         const endCol = startCol; // chỉ 1 cột mỗi lần (nếu bạn muốn range, có thể thay đổi)
                         for (let rowIndex = 0; rowIndex < preparedData[0].length; rowIndex++) {
                             const excelRow = rowIndex + 1;
-                            const rowData = preparedData[0][rowIndex];
+                            // const rowData = preparedData[0][rowIndex];
                             for (let col = startCol; col <= endCol; col++) {
                                 const cellLetter = columnNumberToLetter(col);
                                 const cell = worksheet.getCell(`${cellLetter}${excelRow}`);
@@ -386,7 +354,7 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
                         const endCol = startCol; // chỉ 1 cột mỗi lần (nếu bạn muốn range, có thể thay đổi)
                         for (let rowIndex = 0; rowIndex < preparedData[0].length; rowIndex++) {
                             const excelRow = rowIndex + 1;
-                            const rowData = preparedData[0][rowIndex];
+                            // const rowData = preparedData[0][rowIndex];
                             for (let col = startCol; col <= endCol; col++) {
                                 const cellLetter = columnNumberToLetter(col);
                                 const cell = worksheet.getCell(`${cellLetter}${excelRow}`);
@@ -525,7 +493,7 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
                         const endCol = startCol; // chỉ 1 cột mỗi lần (nếu bạn muốn range, có thể thay đổi)
                         for (let rowIndex = 0; rowIndex < preparedData[0].length; rowIndex++) {
                             const excelRow = rowIndex + 1;
-                            const rowData = preparedData[0][rowIndex];
+                            // const rowData = preparedData[0][rowIndex];
                             for (let col = startCol; col <= endCol; col++) {
                                 const cellLetter = columnNumberToLetter(col);
                                 const cell = worksheet.getCell(`${cellLetter}${excelRow}`);
@@ -661,7 +629,7 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
                         const endCol = startCol; // chỉ 1 cột mỗi lần (nếu bạn muốn range, có thể thay đổi)
                         for (let rowIndex = 0; rowIndex < preparedData[0].length; rowIndex++) {
                             const excelRow = rowIndex + 1;
-                            const rowData = preparedData[0][rowIndex];
+                            // const rowData = preparedData[0][rowIndex];
                             for (let col = startCol; col <= endCol; col++) {
                                 const cellLetter = columnNumberToLetter(col);
                                 const cell = worksheet.getCell(`${cellLetter}${excelRow}`);
