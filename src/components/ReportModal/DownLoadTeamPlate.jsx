@@ -53,7 +53,7 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                     pattern: 'solid',
                     fgColor: { argb: rgbToARGB(218,238,243) } // xám nhạt = giả lập bị khóa
                 };
-                cell.font ={
+                cell.font ={ 
                     name: 'Times New Roman',
                     size: 12,
                 }
@@ -207,7 +207,6 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                 }
             });
         }
-
     };
     const processAndDownloadExcelYearQuaterly = async () => {
         setIsLoading(true);

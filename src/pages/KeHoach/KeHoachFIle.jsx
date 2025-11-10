@@ -218,7 +218,7 @@ export default function FileInterface() {
                             onClick={handleClick}
                             sx={{ height: 56 }}
                         >
-                            📤 Chọn file k hoạch chỉ tiêu
+                            📤 Chọn file kế hoạch chỉ tiêu
                         </Button>
                         {fileName && (
                             <Typography

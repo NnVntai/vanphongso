@@ -38,6 +38,7 @@ const Yearly = lazy(() => import('../pages/Notification/Yearly.jsx'));
 const Weekly = lazy(() => import('../pages/Notification/Weekly.jsx'));
 
 const AdminSupport = lazy(() => import('../pages/Support/indexSupportAdmin.jsx'));
+const ExcelFormular = lazy(() => import('../pages/ChiTieu/Formular.jsx'));
 
 const privateRoutes = [
   {
@@ -232,6 +233,13 @@ const privateRoutes = [
               element: (
                   <RequireRole allowedRoles={['admin']}>
                       <Quarterly />
+                  </RequireRole >)
+          },
+          {
+              path: "excelformular", // ✅ Trang mặc định khi path = "/"
+              element: (
+                  <RequireRole allowedRoles={['admin']}>
+                      <ExcelFormular />
                   </RequireRole >)
           },
 

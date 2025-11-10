@@ -161,9 +161,8 @@ const handleAddBelow = (index) => {
     label: r.ma_chitieu+r.ten_chitieu,
     value: r.id , // đảm bảo có key duy nhất
   }));
-
   return (
-      <TableHearder title="Danh sách các chỉ tiêu">
+      <TableHearder title="Danh sách các chỉ tiêu" backlink="/indexchitieu">
         {/* Body */}
         <div className="p-4 mx-auto space-y-4 bg-white">
           <div className="overflow-x-auto rounded-2xl shadow">
@@ -193,7 +192,6 @@ const handleAddBelow = (index) => {
                       >
                           {/* STT */}
                           <td className="px-1 py-0.5 text-center w-10">{idx + 1}</td>
-
                           {/* Mã chỉ tiêu */}
                           <td className="px-1 py-0.5 w-[90px]">
                               <input
@@ -203,7 +201,6 @@ const handleAddBelow = (index) => {
                                   onChange={(e) => handleChange(idx, "ma_chitieu", e.target.value)}
                               />
                           </td>
-
                           {/* Tên chỉ tiêu */}
                           <td className="px-1 py-0.5 min-w-[150px]">
                               <input
@@ -213,7 +210,6 @@ const handleAddBelow = (index) => {
                                   onChange={(e) => handleChange(idx, "ten_chitieu", e.target.value)}
                               />
                           </td>
-
                           {/* ĐVT */}
                           <td className="px-1 py-0.5 w-[70px]">
                               <input
@@ -362,7 +358,6 @@ const handleAddBelow = (index) => {
                                     <span>Hiển thị ở báo cáo tuần</span>
                                 </div>
                             </div>
-
                     ) : (
                         <p>Không có dữ liệu</p>
                     )}
