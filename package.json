@@ -18,6 +18,7 @@
     "@mui/x-data-grid": "^8.5.3",
     "axios": "^1.10.0",
     "dayjs": "^1.11.13",
+    "excel-formula-ast": "^1.1.1",
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^12.23.24",

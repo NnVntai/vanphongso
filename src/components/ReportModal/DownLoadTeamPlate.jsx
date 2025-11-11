@@ -138,76 +138,76 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
         }
         return letters;
     };
-    const unlockEditableRanges = (worksheet,id_loai) => {
-        if(id_loai===1)
-        {
-            EDITABLE_RANGESWEEK.forEach(range => {
-                try {
-                    if (range.includes(':')) {
-                        const [start, end] = range.split(':');
-                        const startColLetter = start.replace(/\d+/g, '');
-                        const startRow = parseInt(start.replace(/\D+/g, ''));
-                        const endColLetter = end.replace(/\d+/g, '');
-                        const endRow = parseInt(end.replace(/\D+/g, ''));
+    // const unlockEditableRanges = (worksheet,id_loai) => {
+    //     if(id_loai===1)
+    //     {
+    //         EDITABLE_RANGESWEEK.forEach(range => {
+    //             try {
+    //                 if (range.includes(':')) {
+    //                     const [start, end] = range.split(':');
+    //                     const startColLetter = start.replace(/\d+/g, '');
+    //                     const startRow = parseInt(start.replace(/\D+/g, ''));
+    //                     const endColLetter = end.replace(/\d+/g, '');
+    //                     const endRow = parseInt(end.replace(/\D+/g, ''));
 
-                        const startCol = columnLetterToNumber(startColLetter);
-                        const endCol = columnLetterToNumber(endColLetter);
+    //                     const startCol = columnLetterToNumber(startColLetter);
+    //                     const endCol = columnLetterToNumber(endColLetter);
 
-                        for (let row = startRow; row <= endRow; row++) {
-                            for (let col = startCol; col <= endCol; col++) {
-                                const colLetter = columnNumberToLetter(col);
-                                const cellAddress = `${colLetter}${row}`;
-                                try {
-                                    const cell = worksheet.getCell(cellAddress);
-                                    cell.protection = { locked: false };
-                                } catch (e) {
-                                    console.warn(`Không tìm thấy ô ${cellAddress}`);
-                                }
-                            }
-                        }
-                    } else {
-                        const cell = worksheet.getCell(range);
-                        cell.protection = { locked: false };
-                    }
-                } catch (e) {
-                    console.error(`Lỗi khi xử lý range ${range}:`, e);
-                }
-            });
-        }else{
-            EDITABLE_RANGES.forEach(range => {
-                try {
-                    if (range.includes(':')) {
-                        const [start, end] = range.split(':');
-                        const startColLetter = start.replace(/\d+/g, '');
-                        const startRow = parseInt(start.replace(/\D+/g, ''));
-                        const endColLetter = end.replace(/\d+/g, '');
-                        const endRow = parseInt(end.replace(/\D+/g, ''));
+    //                     for (let row = startRow; row <= endRow; row++) {
+    //                         for (let col = startCol; col <= endCol; col++) {
+    //                             const colLetter = columnNumberToLetter(col);
+    //                             const cellAddress = `${colLetter}${row}`;
+    //                             try {
+    //                                 const cell = worksheet.getCell(cellAddress);
+    //                                 cell.protection = { locked: false };
+    //                             } catch (e) {
+    //                                 console.warn(`Không tìm thấy ô ${cellAddress}`);
+    //                             }
+    //                         }
+    //                     }
+    //                 } else {
+    //                     const cell = worksheet.getCell(range);
+    //                     cell.protection = { locked: false };
+    //                 }
+    //             } catch (e) {
+    //                 console.error(`Lỗi khi xử lý range ${range}:`, e);
+    //             }
+    //         });
+    //     }else{
+    //         EDITABLE_RANGES.forEach(range => {
+    //             try {
+    //                 if (range.includes(':')) {
+    //                     const [start, end] = range.split(':');
+    //                     const startColLetter = start.replace(/\d+/g, '');
+    //                     const startRow = parseInt(start.replace(/\D+/g, ''));
+    //                     const endColLetter = end.replace(/\d+/g, '');
+    //                     const endRow = parseInt(end.replace(/\D+/g, ''));
 
-                        const startCol = columnLetterToNumber(startColLetter);
-                        const endCol = columnLetterToNumber(endColLetter);
+    //                     const startCol = columnLetterToNumber(startColLetter);
+    //                     const endCol = columnLetterToNumber(endColLetter);
 
-                        for (let row = startRow; row <= endRow; row++) {
-                            for (let col = startCol; col <= endCol; col++) {
-                                const colLetter = columnNumberToLetter(col);
-                                const cellAddress = `${colLetter}${row}`;
-                                try {
-                                    const cell = worksheet.getCell(cellAddress);
-                                    cell.protection = { locked: false };
-                                } catch (e) {
-                                    console.warn(`Không tìm thấy ô ${cellAddress}`);
-                                }
-                            }
-                        }
-                    } else {
-                        const cell = worksheet.getCell(range);
-                        cell.protection = { locked: false };
-                    }
-                } catch (e) {
-                    console.error(`Lỗi khi xử lý range ${range}:`, e);
-                }
-            });
-        }
-    };
+    //                     for (let row = startRow; row <= endRow; row++) {
+    //                         for (let col = startCol; col <= endCol; col++) {
+    //                             const colLetter = columnNumberToLetter(col);
+    //                             const cellAddress = `${colLetter}${row}`;
+    //                             try {
+    //                                 const cell = worksheet.getCell(cellAddress);
+    //                                 cell.protection = { locked: false };
+    //                             } catch (e) {
+    //                                 console.warn(`Không tìm thấy ô ${cellAddress}`);
+    //                             }
+    //                         }
+    //                     }
+    //                 } else {
+    //                     const cell = worksheet.getCell(range);
+    //                     cell.protection = { locked: false };
+    //                 }
+    //             } catch (e) {
+    //                 console.error(`Lỗi khi xử lý range ${range}:`, e);
+    //             }
+    //         });
+    //     }
+    // };
     const processAndDownloadExcelYearQuaterly = async () => {
         setIsLoading(true);
         setError(null);
@@ -215,7 +215,7 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
         try {
             // const response = await api.get(`/chitieu`, {});
             const response = await api.post(`/kehoach-current`, {year,id_xa:JSON.parse(localStorage.getItem("username")).id_xa });
-            console.log(response.data.data);
+            // console.log(response.data.data);
             const tables = [];
             const rawData = response.data.data;
             let currentGroup = [];
@@ -278,9 +278,9 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                             ct.ten_chitieu,
                             // ct.dvt,
                             (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
-                            (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(4))} ` : null,
-                            (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(5))} ` :  ct.kehoachs[0]?.kehoach??null,
-                            (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(6))} ` :null,
+                            (ct.formular) ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,8), "D", getExcelAlpha(4))} ` : null,
+                            (ct.formular) ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,8), "D", getExcelAlpha(5))} ` :  ct.kehoachs[0]?.kehoach??null,
+                            (ct.formular) ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,8), "D", getExcelAlpha(6))} ` :null,
                         ];
                         row._id=ct.id;
                         row._active=ct.is_active;
@@ -296,11 +296,11 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                             ct.ma_chitieu,
                             ct.ten_chitieu,
                             (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
-                            (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(4))} ` : null,
-                            (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(5))} ` :null,
-                            (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(6))} ` :ct.kehoachs[0]?.kehoach??null,
-                            (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(7))} ` :null,
-                            (formularjson[index ] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(8))} ` :null,
+                            (ct.formular) ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,0), "D", getExcelAlpha(4))} ` : null,
+                            (ct.formular) ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,0), "D", getExcelAlpha(5))} ` :null,
+                            (ct.formular) ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,0), "D", getExcelAlpha(6))} ` :ct.kehoachs[0]?.kehoach??null,
+                            (ct.formular) ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,0), "D", getExcelAlpha(7))} ` :null,
+                            (ct.formular) ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,0), "D", getExcelAlpha(8))} ` :null,
 
                         ];
                         row._id=ct.id;
@@ -359,11 +359,9 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                 worksheet.mergeCells(`${getExcelAlpha(1)}7:${getExcelAlpha(1)}8`);
                 worksheet.mergeCells(`${getExcelAlpha(2)}7:${getExcelAlpha(2)}8`);
                 worksheet.mergeCells(`${getExcelAlpha(3)}7:${getExcelAlpha(3)}8`);
-
                 worksheet.mergeCells(`${getExcelAlpha(4)}7:${getExcelAlpha(4)}8`);
                 worksheet.mergeCells(`${getExcelAlpha(5)}7:${getExcelAlpha(5)}8`);
                 worksheet.mergeCells(`${getExcelAlpha(6)}7:${getExcelAlpha(6)}8`);
-
                 colorbackgroundexcel(worksheet, 1, preparedData[0].length, 1, 6);
                 setBorderForRange(worksheet, 7,preparedData[0].length, 1, 6);
                 aligRightForRange(worksheet,9,rawData.length+8,1,1);
@@ -553,10 +551,9 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                 const matched = rawPlanData.find(kh => chitieu.id === kh.id);
                 // console.log(matched);
                 chitieu.kehoachs = matched.kehoachs;
-
                 currentGroup.push(chitieu);
             }
-            console.log(currentGroup);
+            // console.log(currentGroup);
             if (currentGroup.length > 0) tables.push(currentGroup);
             const preparedData = tables.map((group, idx) => {
                 const data = [];
@@ -597,10 +594,10 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                             ct.ten_chitieu,
                             // ct.dvt,
                             (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
-                            (formularweek[index] && formularweek[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,8), "E", getExcelAlpha(4))} ` : null,
-                            (formularweek[index] && formularweek[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,8), "E", getExcelAlpha(5))} ` : ct.kehoachs[0]?.kehoach??null,
-                            (formularweek[index] && formularweek[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,8), "E", getExcelAlpha(6))} ` :null,
-                            (formularweek[index] && formularweek[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,8), "E", getExcelAlpha(7))} ` :
+                            (ct.formularweek) ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formularweek,0), "D", getExcelAlpha(4))} ` : null,
+                            (ct.formularweek) ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formularweek,0), "D", getExcelAlpha(5))} ` : ct.kehoachs[0]?.kehoach??null,
+                            (ct.formularweek) ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formularweek,0), "D", getExcelAlpha(6))} ` :null,
+                            (ct.formularweek) ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formularweek,0), "D", getExcelAlpha(7))} ` :
                             (ct.is_active)?`=${getExcelAlpha(6)}${index + 9}+`+ ct.total_value2:null,
                         ];
                     }else{
@@ -609,10 +606,10 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                             ct.ten_chitieu,
                             // ct.dvt,
                            (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
-                            (formularjson[index] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(4))} ` : null,
-                            (formularjson[index] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(5))} ` : ct.kehoachs[0]?.kehoach??null,
-                            (formularjson[index] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(6))} ` :null,
-                            (formularjson[index] && formularjson[index].formula) ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,8), "E", getExcelAlpha(7))} ` :
+                            (ct.formular) ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,0), "D", getExcelAlpha(4))} ` : null,
+                            (ct.formular) ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,0), "D", getExcelAlpha(5))} ` : ct.kehoachs[0]?.kehoach??null,
+                            (ct.formular) ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,0), "D", getExcelAlpha(6))} ` :null,
+                            (ct.formular) ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,0), "D", getExcelAlpha(7))} ` :
                                 ( ct.is_active)?`=${getExcelAlpha(6)}${index+9}+`+ ct.total_value2:null,
                         ];
                     }
@@ -711,11 +708,6 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
             worksheet.getCell(`A2`).value="Người nhập báo cáo: "+username?.name;
             worksheet.getCell(`A3`).value="Số ĐT: 0"+username?.phone;
             worksheet.getCell(`A4`).value="Email: "+username?.email;
-
-            // console.log(worksheet);
-            // 3. Mở khóa các vùng cho phép chỉnh sửa
-            // unlockEditableRanges(worksheet,idLoai);
-
             worksheet.getColumn('H').hidden = true;
             worksheet.getColumn('I').hidden = true;
             worksheet.protect('password123', {
@@ -733,7 +725,6 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
                 autoFilter: false,
                 pivotTables: false
             });
-
             // 7. Xuất file
             const buffer = await workbook.xlsx.writeBuffer();
             saveAs(new Blob([buffer]), NameFileDownload+".xlsx" || 'bao-cao.xlsx');

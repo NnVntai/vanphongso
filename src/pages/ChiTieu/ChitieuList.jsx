@@ -40,11 +40,12 @@ export default function ChitieuList() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-    const [selectedIndex, setSelectedIndex] = useState(null);
+  const [loadingGlobal, setLoadingGlobal] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedFileType, setSelectedFileType] = useState(0);
   const [fileTypes, setFileTypes] = useState([]);
-const [openDialog, setOpenDialog] = useState(false);
-const [selectedRow, setSelectedRow] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
   const fetchFileTypes = async () => {
     try {
       const { data } = await api.get("/loaibaocao");
@@ -58,7 +59,7 @@ const [selectedRow, setSelectedRow] = useState(null);
     const fetchRows = async () => {
       try {
         const { data } = await api.get(`/chitieu/${selectedFileType}`);
-        console.log(data);
+        // console.log(data);
         //
         const list = Array.isArray(data) ? data : data.rows || [];
         list.sort((a, b) => (a.stt ?? 0) - (b.stt ?? 0));
@@ -111,10 +112,9 @@ const [selectedRow, setSelectedRow] = useState(null);
     if (!rows.length) return;
     try {
       setLoading(true);
-
       // Gửi 1 lần thay vì vòng lặp put/post
       const { data } = await api.post("/chitieu/bulk", { rows });
-      console.log(data);
+      // console.log(data);
       // Server trả về danh sách đã upsert kèm id mới
       const list = Array.isArray(data) ? data : data.rows || [];
       list.sort((a, b) => (a.stt ?? 0) - (b.stt ?? 0));
@@ -162,8 +162,37 @@ const handleAddBelow = (index) => {
     value: r.id , // đảm bảo có key duy nhất
   }));
   return (
+
       <TableHearder title="Danh sách các chỉ tiêu" backlink="/indexchitieu">
-        {/* Body */}
+        {/* Body */}    
+        {loadingGlobal && (
+          <Box
+              sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  backgroundColor: "rgba(0,0,0,0)",
+                  zIndex: 2000,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#fff"
+              }}
+          >
+              <img
+                  src="https://i.gifer.com/ZKZg.gif"
+                  alt="loading"
+                  width="100"
+                  style={{ marginBottom: 10 }}
+              />
+              <Typography variant="h6" sx={{ color: "#fff" }}>
+                  Đang xử lý, vui lòng chờ...
+              </Typography>
+          </Box>
+      )}
         <div className="p-4 mx-auto space-y-4 bg-white">
           <div className="overflow-x-auto rounded-2xl shadow">
             <table className="min-w-full divide-y divide-gray-200">

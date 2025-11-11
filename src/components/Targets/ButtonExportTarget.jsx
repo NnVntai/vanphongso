@@ -5,8 +5,9 @@ import api from '@/config';
 import formularjson from '/src/utils/formular.json';
 import khjson from '/src/utils/kh.json';
 import CKNNjson from '/src/utils/CKNN.json';
-import { Button } from "@mui/material";
+import { Button ,Box,Typography} from "@mui/material";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+
 
 const getExcelAlpha = (n) => {
     let result = '';
@@ -96,10 +97,11 @@ const columnNumberToLetter = (num) => {
 
 const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
     // const [tableData, setTableData] = useState([]);
-
+      const [loadingGlobal, setLoadingGlobal] = useState(false);
     // Fetch data from API and export to Excel
     const exportToExcelFile = async () => {
         try {
+            setLoadingGlobal(true);
             const response = await api.get(`/data-targets`);
             // console.log(response)
             const tables = [];
@@ -664,21 +666,56 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
             // Save the file as a blob and prompt download
             const buffer = await workbook.xlsx.writeBuffer();
             saveAs(new Blob([buffer]), 'Formular.xlsx');
+              setLoadingGlobal(false);
         } catch (error) {
             console.error("Error fetching data for report:", error);
+              setLoadingGlobal(false);
+        }
+        finally{
+             setLoadingGlobal(false);
         }
     };
     return (
-        <Button
-            onClick={exportToExcelFile}
-            variant="contained"
-            color="primary"
-            sx={{ height: 56 }}
-            startIcon={<FileDownloadIcon />}
-            // sx={{ mt: 2 }}
-        >
-            Tải Xuống file Excel
-        </Button>
+        <>
+         {loadingGlobal && (
+                    <Box
+                        sx={{
+                            position: "fixed",
+                            top: 0,
+                            left: 0,
+                            width: "100vw",
+                            height: "100vh",
+                            backgroundColor: "rgba(0,0,0,0)",
+                            zIndex: 2000,
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "#fff"
+                        }}
+                    >
+                        <img
+                            src="https://i.gifer.com/ZKZg.gif"
+                            alt="loading"
+                            width="100"
+                            style={{ marginBottom: 10 }}
+                        />
+                        <Typography variant="h6" sx={{ color: "#fff" }}>
+                            Đang xử lý, vui lòng chờ...
+                        </Typography>
+                    </Box>
+                )}
+            <Button
+                onClick={exportToExcelFile}
+                variant="contained"
+                color="primary"
+                sx={{ height: 56 }}
+                startIcon={<FileDownloadIcon />}
+                // sx={{ mt: 2 }}
+            >
+                Tải Xuống file Excel
+            </Button>
+        </>
     );
 };
 

@@ -172,7 +172,7 @@ export default function FileInterface() {
         }
     }
     return (
-        <TableHearder title="Nộp kế hoạch chỉ tiêu theo file tải lên">
+        <TableHearder title="Nộp kế hoạch chỉ tiêu theo file tải lên" backlink="/kehoach">
             <Box className="bg-amber-50" p={3}>
                 <Grid container spacing={3} justifyContent="center">
 

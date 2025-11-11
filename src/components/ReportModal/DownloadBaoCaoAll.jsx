@@ -215,16 +215,16 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
                             ct.ma_chitieu,
                             ct.ten_chitieu,
                          (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
-                            formularweek[index] && formularweek[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index ].formula,6), "E", getExcelAlpha(4))} ` : ct.total_value1 === 0 ? null : ct.total_value1,
-                            formularweek[index ] && formularweek[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index ].formula,6), "E", getExcelAlpha(5))} ` :  ct.kehoach === 0 ? null : ct.kehoach,
-                            formularweek[index ] && formularweek[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index ].formula,6), "E", getExcelAlpha(6))} ` : ct.total_value2 === 0 ? null : ct.total_value2,
-                            formularweek[index ] && formularweek[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,6), "E", getExcelAlpha(7))} ` : ct.total_value3 === 0 ? null : ct.total_value3,
-                            khweek[index] && khweek[index ].formula ? evaluateRelativeFormula(khweek[index ].formula ,6): null,
-                            CKNNweek[index ] && CKNNweek[index ].formula ? evaluateRelativeFormula(CKNNweek[index ].formula ,6): null,
+                            ct.formularweek ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formularweek,-2), "D", getExcelAlpha(4))} ` : ct.total_value1 === 0 ? null : ct.total_value1,
+                           ct.formularweek  ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formularweek ,-2), "D", getExcelAlpha(5))} ` :  ct.kehoach === 0 ? null : ct.kehoach,
+                            ct.formularweek  ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formularweek ,-2), "D", getExcelAlpha(6))} ` : ct.total_value2 === 0 ? null : ct.total_value2,
+                            ct.formularweek  ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formularweek ,-2), "D", getExcelAlpha(7))} ` : ct.total_value3 === 0 ? null : ct.total_value3,
+                            ct.planweekformular? `${replaceColumnLetter(evaluateRelativeFormula(ct.planweekformular ,-2), "D", getExcelAlpha(5))} `: null,
+                            ct.planweekformular  ? evaluateRelativeFormula(ct.planweekformular ,-2): null,
                         ];
 
                         ct.xa.forEach((x, xaIndex) => {
-                            row.push(formularweek[index] && formularweek[index].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularweek[index].formula,6), "E", getExcelAlpha(xaIndex + 10))} ` : x.value3.giatri === 0 ? null : x.value3.giatri);
+                            row.push( ct.formularweek  ? `${replaceColumnLetter(evaluateRelativeFormula( ct.formularweek ,-2), "D", getExcelAlpha(xaIndex + 10))} ` : x.value3.giatri === 0 ? null : x.value3.giatri);
                         });
 
                         data.push(row);
@@ -235,16 +235,16 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
                             ct.ma_chitieu,
                             ct.ten_chitieu,
                              (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
-                            formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index ].formula,6), "E", getExcelAlpha(4))} ` : ct.total_value1 === 0 ? null : ct.total_value1,
-                            formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index ].formula,6), "E", getExcelAlpha(5))} ` :  ct.kehoach === 0 ? null : ct.kehoach,
-                            formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index ].formula,6), "E", getExcelAlpha(6))} ` : ct.total_value2 === 0 ? null : ct.total_value2,
-                            formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index ].formula,6), "E", getExcelAlpha(7))} ` : ct.total_value3 === 0 ? null : ct.total_value3,
-                            khjson[index ] && khjson[index ].formula ? evaluateRelativeFormula(khjson[index ].formula,6 ): null,
-                            CKNNjson[index ] && CKNNjson[index ].formula ? evaluateRelativeFormula(CKNNjson[index ].formula,6) : null,
+                            ct.formular ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,-2), "D", getExcelAlpha(4))} ` : ct.total_value1 === 0 ? null : ct.total_value1,
+                            ct.formular ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,-2), "D", getExcelAlpha(5))} ` :  ct.kehoach === 0 ? null : ct.kehoach,
+                            ct.formular ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,-2), "D", getExcelAlpha(6))} ` : ct.total_value2 === 0 ? null : ct.total_value2,
+                            ct.formular ? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,-2), "D", getExcelAlpha(7))} ` : ct.total_value3 === 0 ? null : ct.total_value3,
+                            ct.planformular ? `${replaceColumnLetter(evaluateRelativeFormula(ct.planformular,-2), "D", getExcelAlpha(5))} ` : null,
+                            ct.planformular ? evaluateRelativeFormula(ct.planformular,-2 ): null,
                         ];
                         // evaluateRelativeFormula()
                         ct.xa.forEach((x, xaIndex) => {
-                            row.push(formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index ].formula,6), "E", getExcelAlpha(xaIndex + 10))} ` : x.value3.giatri === 0 ? null : x.value3.giatri);
+                            row.push( ct.formular? `${replaceColumnLetter(evaluateRelativeFormula(ct.formular,-2), "D", getExcelAlpha(xaIndex + 10))} ` : x.value3.giatri === 0 ? null : x.value3.giatri);
                         });
 
                         data.push(row);
@@ -255,15 +255,15 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
                             ct.ma_chitieu,
                             ct.ten_chitieu,
                              (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
-                            formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index ].formula,6), "E", getExcelAlpha(4))} ` : ct.total_value1 === 0 ? null : ct.total_value1,
-                            formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index ].formula,6), "E", getExcelAlpha(5))} ` :  ct.kehoach === 0 ? null : ct.kehoach,
-                            formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index ].formula,6), "E", getExcelAlpha(6))} ` : ct.total_value3 === 0 ? null : ct.total_value3,
-                            khjson[index ] && khjson[index ].formula ? evaluateRelativeFormula(replaceColumnLetter(khjson[index ].formula,"G","F"),6): null,
-                            CKNNjson[index ] && CKNNjson[index ].formula ? evaluateRelativeFormula(replaceColumnLetter(CKNNjson[index ].formula,"G","F"),6): null,
+                             ct.formular ? `${replaceColumnLetter(evaluateRelativeFormula(  ct.formular,-2), "D", getExcelAlpha(4))} ` : ct.total_value1 === 0 ? null : ct.total_value1,
+                            ct.formular ? `${replaceColumnLetter(evaluateRelativeFormula(  ct.formular,-2), "D", getExcelAlpha(5))} ` :  ct.kehoach === 0 ? null : ct.kehoach,
+                            ct.formular ? `${replaceColumnLetter(evaluateRelativeFormula(  ct.formular,-2), "D", getExcelAlpha(6))} ` : ct.total_value3 === 0 ? null : ct.total_value3,
+                            ct.planformular? `${replaceColumnLetter(evaluateRelativeFormula(replaceColumnLetter( ct.planformular,"G","F"),-2),'D',getExcelAlpha(5))}`: null,
+                            ct.planformular ? evaluateRelativeFormula(replaceColumnLetter( ct.planformular,"G","F"),-2): null,
                         ];
                         ct.xa.forEach((x, xaIndex) => {
-                            console.log(x.value3.giatri);
-                            row.push(formularjson[index ] && formularjson[index ].formula ? `${replaceColumnLetter(evaluateRelativeFormula(formularjson[index].formula,6), "E", getExcelAlpha(xaIndex + 9))} ` : x.value3.giatri === 0 ? null : x.value3.giatri);
+                            // console.log(x.value3.giatri);
+                            row.push( ct.formular ? `${replaceColumnLetter(evaluateRelativeFormula( ct.formular,-2), "D", getExcelAlpha(xaIndex + 9))} ` : x.value3.giatri === 0 ? null : x.value3.giatri);
                         });
                         data.push(row);
                     });
