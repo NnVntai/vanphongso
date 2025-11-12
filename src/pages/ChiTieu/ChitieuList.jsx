@@ -249,10 +249,10 @@ const handleAddBelow = (index) => {
                               />
                           </td>
                           <td className="px-1 py-0.5 w-[70px]">
-                              <td>{row.is_active?"Nhập":"Không nhập"}</td>
+                             {row.is_active?"Nhập":"Không nhập"}
                           </td>
                           <td className="px-1 py-0.5 w-[70px]">
-                              <td>{row.is_week?"Báo cáo tuần":"Tất cả"}</td>
+                             {row.is_week?"Báo cáo tuần":"Tất cả"}
                           </td>
                           <td className="px-1 py-0.5 text-center w-[100px]">
                               <button

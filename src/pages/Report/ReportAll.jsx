@@ -48,7 +48,7 @@ export default function ReportAll() {
         fetchFileTypes();
         fetchStats(); // Load dữ liệu ban đầu
     }, []);
-    const fetchFileTypes = async () => {
+    const fetchFileTypes = async () => {``
         try {
             const { data } = await api.get("/loaibaocao");
             setFileTypes(Array.isArray(data) ? data : []);
@@ -58,6 +58,47 @@ export default function ReportAll() {
             console.error("Lỗi khi tải loại báo cáo:", err);
         }
     };
+    // Monday-based; Week 1 = week containing Jan 1
+    function week1Monday(year) {
+        const jan1 = new Date(year, 0, 1);
+        const dowMon0 = (jan1.getDay() + 6) % 7; // Mon=0..Sun=6
+        const m = new Date(jan1);
+        m.setDate(jan1.getDate() - dowMon0);
+        m.setHours(0,0,0,0);
+        return m;
+    }
+
+    // Trả 52 hoặc 53 theo quy tắc trên
+
+
+    // Trả {year, week} để xử lý giao thoa cuối năm
+    function getVNWeekYear(date) {
+        const d = new Date(date);
+        const dowMon0 = (d.getDay() + 6) % 7;
+        const monday = new Date(d);
+        monday.setDate(d.getDate() - dowMon0);
+        monday.setHours(0,0,0,0);
+
+        const y = d.getFullYear();
+        const w1Curr = week1Monday(y);
+        const w1Next = week1Monday(y + 1);
+
+        let weekYear;
+        if (monday < w1Curr) weekYear = y - 1;
+        else if (monday >= w1Next) weekYear = y + 1;
+        else weekYear = y;
+
+        const w1 = week1Monday(weekYear);
+        const week = Math.floor((monday - w1) / (7 * 24 * 60 * 60 * 1000)) + 1;
+
+        return { year: weekYear, week };
+    }
+    function getVNWeeksInYear(year) {
+        const w1 = week1Monday(year);
+        const w1next = week1Monday(year + 1);
+        const weeks = Math.floor((w1next - w1) / (7 * 24 * 60 * 60 * 1000));
+        return weeks; // 52 hoặc 53
+    }
     const fetchStats = async () => {
         setLoading(true);
         try {
@@ -78,12 +119,6 @@ export default function ReportAll() {
     const handleFilter = () => {
         fetchStats(); // Gọi API khi click nút lọc
     };
-    // const getTotalWeeksInYear=(year)=> {
-    //     return dayjs(`${year}-12-28`).isoWeek();
-    // }
-    const getTotalWeeksInYear=(year)=> {
-        return 52;
-    }
     const handleReset = () => {
         setSelectedFileType(1);
         setMonth(currentMonth);
@@ -95,12 +130,12 @@ export default function ReportAll() {
             fetchStats();
         }
     }, [selectedFileType, year, month]);
+
+    // console.log(getVNWeekYear('2025-12-29'));
     const getCards = () => {
         const type = parseInt(selectedFileType);
-        // const monthofquarter = [ 3, 6,9,12];
         let count = 0;
-        // console.log(getTotalWeeksInYear(year));
-        if (type === 1) count = getTotalWeeksInYear(year);
+        if (type === 1) count = getVNWeeksInYear(year);
         else if (type === 2) count = 12;
         else if (type === 3) count = 4;
         else if (type === 4) count = 4;

@@ -63,7 +63,6 @@ export default function ReportAdmin() {
             console.error("Lỗi khi tải loại báo cáo:", err);
         }
     };
-
     // NEW: Lấy danh sách xã (communes)
     const fetchCommunes = async () => {
         try {

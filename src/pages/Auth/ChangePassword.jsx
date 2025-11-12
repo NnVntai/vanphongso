@@ -78,7 +78,7 @@ export default function ChangePasswordForm() {
     };
 
     return (
-        <TableHearder title="Thay đổi mật khẩu">
+        <TableHearder title="Thay đổi mật khẩu" backlink="/setting">
             <Box mx="auto" className="w-full relative">
                 <Card sx={{ mx: "auto", backgroundColor: "#fff" }}>
                     <CardContent>

@@ -4,6 +4,7 @@ import { FaPhoneAlt,FaHistory  ,FaFileUpload, FaKey    } from 'react-icons/fa';
 import { FaUserPen } from "react-icons/fa6";
 import { MdOutlineFormatListNumbered } from "react-icons/md";
 import { CiCircleList } from "react-icons/ci";
+import { TbTargetArrow } from "react-icons/tb";
 import { MdOutlineKeyboardReturn } from "react-icons/md";
 import { GiPackedPlanks } from "react-icons/gi";
 import { ImListNumbered } from "react-icons/im";
@@ -27,7 +28,7 @@ const ChitieuIndex = () => {
                 </Link >
                 <Link to="/excelformular" class="bg-white rounded-lg shadow-md p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col items-center justify-center flex-1 min-w-[250px] max-w-[300px] ">
                     <div class="w-15 h-15 mb-5 flex items-center justify-center">
-                        <ImListNumbered class=" text-black-500 text-7xl" />
+                        <TbTargetArrow class=" text-black-500 text-7xl" />
                         <i class="fas fa-home text-blue-500 text-4xl"></i>
                     </div>
                     <h3 class="text-xl font-bold text-gray-800 mb-2">Điều chỉnh Công thức file Excel</h3>

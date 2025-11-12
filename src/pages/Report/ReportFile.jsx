@@ -620,6 +620,7 @@ export default function FileInterface() {
             <div className="bg-white">
                 <Box maxWidth="sx" mx="auto" p={3}>
                     <StepWizard selectedReports={(selectedReports)=>{
+                        console.log(selectedReports);
                         if (selectedReports[0]?.id_loaibaocao === 1) {
                             fetchAndSetTime();
                             setQuarter(null);

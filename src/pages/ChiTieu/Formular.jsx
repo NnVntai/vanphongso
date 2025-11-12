@@ -268,7 +268,7 @@ export default function FileInterface() {
         }
     }
     return (
-        <TableHearder title="Đều chỉnh công thức báo cáo" backlink="/indexchitieu">
+        <TableHearder title="Điều chỉnh công thức báo cáo" backlink="/indexchitieu">
             {loadingGlobal && (
                     <Box
                         sx={{
