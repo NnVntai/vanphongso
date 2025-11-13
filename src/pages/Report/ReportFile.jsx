@@ -35,7 +35,7 @@ import StepWizard from "../../components/Wizard/StepWizard.jsx"
 // import dayjs from "dayjs";
 dayjs.locale('vi');
 
-async function getTimeInfo(timezone = "Asia/Ho_Chi_Minh", allowedDifferenceMinutes = 1) {
+async function getTimeInfo(timezone = "Asia/Ho_Chi_Minh", allowedDifferenceMinutes = 2) {
     try {
 
         const clientTime = new Date().toISOString();
@@ -393,13 +393,15 @@ export default function FileInterface() {
         fetchAndSetTime();  // Gọi hàm
         fetchFileTypes();
     }, []);
-    // useEffect(() => {
+
+    useEffect(() => {
     //     console.log(year,month,week,quarter,selectedFileType);
-    // }, [year,month,week,quarter,selectedFileType]);
+           console.log("year "+ year,"month " +month, "quarter "+ quarter,"numberYear " +numberYear,"week "+ week);
+    }, [year,month,week,quarter,numberYear,selectedFileType]);
     const checkClickSend = async () => {
 
         if (!selectedFileType || !year ||!fileName||
-            (selectedType === 1 && (!week || !month)) ||
+            (selectedType === 1 && !week) ||
             (selectedType === 2 && !month) ||
             (selectedType === 3 && !quarter) ||
             (selectedType === 4 && !numberYear)) {
@@ -421,7 +423,7 @@ export default function FileInterface() {
     const handleSubmitReport = async () => {
         setLoadingGlobal(true);
         const file = inputRef.current?.files[0];
-        console.log(inputRef.current);
+        // console.log(inputRef.current);
         if (!selectedFileType || !file) return;
 
         const timeCheck = await getTimeInfo("Asia/Ho_Chi_Minh", 1); // lệch <=1 phút
@@ -446,11 +448,10 @@ export default function FileInterface() {
         formData.append("filename", file);
         formData.append("id_loaibaocao", selectedFileType);
         formData.append("year_report", year);
-        formData.append("number_report", numberYear);
         formData.append("islate", isLate);
         if(selectedFileType===1){
             if (week) formData.append("week_report", week);
-            if (month) formData.append("month_report", month);
+            // if (month) formData.append("month_report", month);
         }else if(selectedFileType===2){
             if (month) formData.append("month_report", month);
         }else if(selectedFileType===3){
@@ -458,6 +459,7 @@ export default function FileInterface() {
         }else if(selectedFileType===4){
             if (numberYear) formData.append("number_report", numberYear);
         }
+
         try {
             if(selectedFileType===3&&quarter>1)
             {
@@ -534,6 +536,9 @@ export default function FileInterface() {
                     console.log(e);
                 }
             }else{
+                formData.forEach((value, key) => {
+                    console.log(key, value);
+                });
                 let response = await api.post("/reports", formData, {
                     headers: {"Content-Type": "multipart/form-data"},
                 });
@@ -619,39 +624,46 @@ export default function FileInterface() {
             )}
             <div className="bg-white">
                 <Box maxWidth="sx" mx="auto" p={3}>
-                    <StepWizard selectedReports={(selectedReports)=>{
-                        console.log(selectedReports);
+                    <StepWizard selectedReports={ async (selectedReports) =>{
+                        // console.log(selectedReports);
                         if (selectedReports[0]?.id_loaibaocao === 1) {
-                            fetchAndSetTime();
+                            await fetchAndSetTime();
                             setQuarter(null);
+                            setNumberYear(null);
                             setMonth(null);
-                            // setYear(year);
-                            setWeek(week);
+                            setYear(selectedReports[0]?.customYear===undefined?year:selectedReports[0]?.customYear);
+                            setWeek(selectedReports[0]?.customWeek === undefined?week:selectedReports[0].customWeek);
                             setSelectedFileType(selectedReports[0].id_loaibaocao);
                             setIsLate(selectedReports[0].islate);
                         } else if (selectedReports[0]?.id_loaibaocao === 2) {
-                            fetchAndSetTime();
+                            await fetchAndSetTime();
                             setQuarter(null);
                             setWeek(null);
-                            setMonth(month);
-                            // setYear(year);
+                            setNumberYear(null);
+                            setMonth(selectedReports[0]?.customMonth === undefined?month:selectedReports[0].customMonth);
+                            setYear(selectedReports[0]?.customYear===undefined?year:selectedReports[0]?.customYear);
                             setSelectedFileType(selectedReports[0].id_loaibaocao);
                             setIsLate(selectedReports[0].islate);
                         } else if (selectedReports[0]?.id_loaibaocao === 3) {
                             setQuarter(selectedReports[0].quarter);
                             setMonth(null);
-                            // setYear(year);
+                            setYear(year);
+                            setWeek(null);
                             setSelectedFileType(selectedReports[0].id_loaibaocao);
                             setIsLate(selectedReports[0].islate);
+                            setNumberYear(null);
                         } else if (selectedReports[0]?.id_loaibaocao === 4) {
                             setNumberYear(selectedReports[0].quarter);
+                            setQuarter(null);
                             setMonth(null);
-                            // setYear(year);
+                            setWeek(null);
+                            setYear(year);
                             setSelectedFileType(selectedReports[0].id_loaibaocao);
                             setIsLate(selectedReports[0].islate);
                         } else {
                             setSelectedFileType();
                         }
+                        // console.log("year "+ year,"month " +month, "quarter "+ quarter,"numberYear " +numberYear,"week "+ week);
                     }}
                     year={year} month={month} week={week} numberYear={numberYear} quarter={quarter}
                     selectedFileType={selectedFileType}

@@ -91,7 +91,7 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
     const handleDownload = () => {
         const isInvalid =
             !idLoai || !year ||
-            (idLoai === 1 && (!year || !month ||!week)) ||
+            (idLoai === 1 && (!year  ||!week)) ||
             (idLoai === 2 && (!year || !month)) ||
             (idLoai === 3 && (!year||!quarter)) ||
             (idLoai === 4 && (!year||!number));
@@ -546,6 +546,7 @@ const ExcelDownloader = ({year, idLoai, id_xa,username,quarter,week,number,month
             const tables = [];
             const rawData = response.data?.data || [];
             const rawPlanData = responsePlan.data?.data || [];
+            console.log(response)
             let currentGroup = [];
             for (const [index, chitieu] of rawData.entries()) {
                 const matched = rawPlanData.find(kh => chitieu.id === kh.id);
