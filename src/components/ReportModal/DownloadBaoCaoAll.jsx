@@ -2,12 +2,6 @@ import React, { useState } from 'react';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import api from '@/config';
-import formularjson from '/src/utils/formular.json';
-import khjson from '/src/utils/kh.json';
-import CKNNjson from '/src/utils/CKNN.json';
-import khweek from '/src/utils/khWEEK.json';
-import CKNNweek from '/src/utils/CKNNWEEK.json';
-import formularweek from '/src/utils/formularweek.json';
 const getExcelAlpha = (n) => {
     let result = '';
     while (n > 0) {
@@ -107,12 +101,12 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
                 loaibaocao_id:loaibaocaoId,
                 number,
             });
-            console.log(  year,
-                month,
-                quarter,
-                week,
-                loaibaocaoId,
-                number)
+            console.log('year '+  year,
+                'month '+ month,
+               'quarter '+  quarter,
+              'week '+   week,
+               'loaibaocaoId '+  loaibaocaoId,
+              'number '+   number)
             let namefile="";
             const tables = [];
             const rawData = response.data.data;
@@ -130,7 +124,7 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
                 currentGroup.push(chitieu);
             }
             if (currentGroup.length > 0) tables.push(currentGroup);
-
+            console.log(tables);
             // Prepare data for export
             const preparedData = tables.map((group, idx) => {
                 const xaList = group[0].xa.map((x) => x.ten_xa);
@@ -257,13 +251,13 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
                              (ct.dvt == "103cây" ? "10³ cây" :(ct.dvt == "m3"? "m³":  ct.dvt)),
                              ct.formular ? `${replaceColumnLetter(evaluateRelativeFormula(  ct.formular,-2), "D", getExcelAlpha(4))} ` : ct.total_value1 === 0 ? null : ct.total_value1,
                             ct.formular ? `${replaceColumnLetter(evaluateRelativeFormula(  ct.formular,-2), "D", getExcelAlpha(5))} ` :  ct.kehoach === 0 ? null : ct.kehoach,
-                            ct.formular ? `${replaceColumnLetter(evaluateRelativeFormula(  ct.formular,-2), "D", getExcelAlpha(6))} ` : ct.total_value3 === 0 ? null : ct.total_value3,
+                            ct.formular ? `${replaceColumnLetter(evaluateRelativeFormula(  ct.formular,-2), "D", getExcelAlpha(6))} ` : ct.total_value2 === 0 ? null : ct.total_value2,
                             ct.planformular? `${replaceColumnLetter(evaluateRelativeFormula(replaceColumnLetter( ct.planformular,"G","F"),-2),'D',getExcelAlpha(5))}`: null,
                             ct.planformular ? evaluateRelativeFormula(replaceColumnLetter( ct.planformular,"G","F"),-2): null,
                         ];
                         ct.xa.forEach((x, xaIndex) => {
                             // console.log(x.value3.giatri);
-                            row.push( ct.formular ? `${replaceColumnLetter(evaluateRelativeFormula( ct.formular,-2), "D", getExcelAlpha(xaIndex + 9))} ` : x.value3.giatri === 0 ? null : x.value3.giatri);
+                            row.push( ct.formular ? `${replaceColumnLetter(evaluateRelativeFormula( ct.formular,-2), "D", getExcelAlpha(xaIndex + 9))} ` : x.value2.giatri === 0 ? null : x.value2.giatri);
                         });
                         data.push(row);
                     });

@@ -23,7 +23,7 @@ const Home = () => {
                             < MdOutlineContactSupport class=" text-black-500 text-7xl" />
                             <i class="fas fa-home text-blue-500 text-4xl"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Đóng góp ý kiến bổ sung</h3>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Gửi thông tin đóng góp & Báo lỗi</h3>
 
                     </Link >)}
 
@@ -33,7 +33,7 @@ const Home = () => {
                             <MdOutlineContactPhone   class=" text-black-500 text-7xl" />
                             <i class="fas fa-home text-blue-500 text-4xl"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Thông tin liên hệ</h3>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Thông tin liên hệ trực tiếp</h3>
 
                     </Link >)}
                 <Link to="/" class="bg-white rounded-lg shadow-md p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col items-center justify-center flex-1 min-w-[250px] max-w-[300px] ">

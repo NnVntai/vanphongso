@@ -117,7 +117,7 @@ const ReportNotificationScheduler = ({
         const startDate = new Date(currentYear - 1, 9, 1);
         const { year: startYear, week: startWeek } = getVNWeekYear(startDate);
         const { year: currentVNYear, week: currentVNWeek } = getVNWeekYear(new Date());
-
+        // console.log(oldReport);
         const allWeeks = [];
         for (let y = startYear; y <= currentVNYear; y++) {
           const totalWeeks = getVNWeeksInYear(y);
@@ -320,10 +320,10 @@ const ReportNotificationScheduler = ({
 
       if (selectedData) {
         const result = calculateTimes(selectedData);
-
+      
         // ==== KIỂM TRA ĐÃ NỘP ====
         const isSubmitted = submittedReports.some((r) => {
-
+      
           // --- TUẦN ---
           if (selectedData.id_loaibaocao === 1) {
             return (
@@ -339,6 +339,21 @@ const ReportNotificationScheduler = ({
               r.id_loaibaocao === 2 &&
               r.month_report === (selectedData.customMonth) &&
               r.year_report === (selectedData.customYear)
+            );
+
+          }
+          if (selectedData.id_loaibaocao === 3) {
+            return (
+              r.id_loaibaocao ===3 &&
+              r.quarter_report === (selectedData.quarter) &&
+              r.year_report === (year)
+            );
+          }
+          if (selectedData.id_loaibaocao === 4) {
+            return (
+              r.id_loaibaocao === 4 &&
+              r.number_report === (selectedData.quarter) &&
+              r.year_report === (year)
             );
           }
 
@@ -399,6 +414,21 @@ const ReportNotificationScheduler = ({
                 return (
                   r.id_loaibaocao === 2 &&
                   r.month_report === (item.customMonth || getMonthIn) &&
+                  r.year_report === (item.customYear || dayjs().year())
+                );
+              }
+               if (item.id_loaibaocao === 3) {
+                // console.log(item);
+                return (
+                  r.id_loaibaocao === 3 &&
+                  r.quarterly_report === (item.quarter)&&
+                  r.year_report === (item.customYear || dayjs().year())
+                );
+              }
+               if (item.id_loaibaocao === 4) {
+                return (
+                  r.id_loaibaocao === 4 &&
+                  r.number_report === (item.quarter) &&
                   r.year_report === (item.customYear || dayjs().year())
                 );
               }

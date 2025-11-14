@@ -135,7 +135,7 @@ export default function FileInterface() {
         }
         return String(value);
     };
-
+    
     const handleFileChange = async (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -210,7 +210,7 @@ export default function FileInterface() {
                     let previrewExcel = jsonData.slice(8, 500);
                     // console.log(selectedFileType);
                     if (selectedFileType === 1&&previrewExcel[0].length >8) {
-                        console.log(jsonData.slice(6,7)[0][6],("W"+week+month+year+JSON.parse(localStorage.getItem("username")).id),jsonData.slice(6,7)[0][7]);
+                        // console.log(jsonData.slice(6,7)[0][6],("W"+week+month+year+JSON.parse(localStorage.getItem("username")).id),jsonData.slice(6,7)[0][7]);
                         if(jsonData.slice(6,7)[0][7]!==("W"+week+month+year+JSON.parse(localStorage.getItem("username")).id))
                         {
                             resetFileUpload();
@@ -243,9 +243,9 @@ export default function FileInterface() {
                             });
                             return;
                         }
-                    }else if(selectedFileType === 3&&previrewExcel[0].length <9){
-                        // console.log(jsonData.slice(6,7)[0][5],("W"+quarter+year));
-                        if(jsonData.slice(6,7)[0][6]!==("Q"+quarter+year+JSON.parse(localStorage.getItem("username")).id))
+                       
+                    }else if(selectedFileType === 3&&previrewExcel[0].length <11){          
+                        if(jsonData.slice(6,7)[0][8]!==("Q"+quarter+year+JSON.parse(localStorage.getItem("username")).id))
                         {
                             resetFileUpload();
                             confirmAlert({
@@ -262,7 +262,7 @@ export default function FileInterface() {
                         }
                     }else if(selectedFileType === 4&&previrewExcel[0].length <9){
                         // console.log(jsonData.slice(6,7)[0][5],("W"+numberYear+year));
-                        console.log(jsonData.slice(6,7)[0][6]);
+                        // console.log(jsonData.slice(6,7)[0][6]);
                         if(jsonData.slice(6,7)[0][6]!==("Y"+numberYear+year+JSON.parse(localStorage.getItem("username")).id))
                         {
                             resetFileUpload();
@@ -281,46 +281,20 @@ export default function FileInterface() {
                     }
                     if (previrewExcel[0].length < 9 && selectedFileType > 2) {
                         // console.log(previrewExcel[0].length);
-                        if(selectedFileType===3&&quarter>1)
-                        {
-                            if(quarter===2||quarter===3||quarter===4)
-                            {
-                                for (let i = 0; i < previrewExcel.length; i++) {
-                                    if (previrewExcel[i][7] == true) {
-                                        datapost.current.push(
-                                        {
-                                            id_report: null,
-                                            id_chitieu: previrewExcel[i][6],
-                                            value1: (previrewExcel[i][3] && typeof previrewExcel[i][3] === 'object') ? toValidString(previrewExcel[i][3].result) : toValidString(previrewExcel[i][3]),
-                                            value2: (previrewExcel[i][6] && typeof previrewExcel[i][6] === 'object') ? toValidString(previrewExcel[i][6].result) : toValidString(previrewExcel[i][6]),
-                                            value3: null,
-                                        });
-                                        datapostyear.current.push(
-                                            {
-                                                id_report: null,
-                                                id_chitieu: previrewExcel[i][6],
-                                                value1: (previrewExcel[i][4] && typeof previrewExcel[i][4] === 'object') ? toValidString(previrewExcel[i][4].result) : toValidString(previrewExcel[i][4]),
-                                                value2: (previrewExcel[i][7] && typeof previrewExcel[i][7] === 'object') ? toValidString(previrewExcel[i][7].result) : toValidString(previrewExcel[i][7]),
-                                                value3: null,
-                                            });
-
-                                    }
-                                }
-                            }
-                        }else{
-                            for (let i = 0; i < previrewExcel.length; i++) {
-                                if (previrewExcel[i][7] == true) {
-                                    datapost.current.push(
-                                        {
-                                            id_report: null,
-                                            id_chitieu: previrewExcel[i][6],
-                                            value1: (previrewExcel[i][3] && typeof previrewExcel[i][3] === 'object') ? toValidString(previrewExcel[i][3].result) : toValidString(previrewExcel[i][3]),
-                                            value2: (previrewExcel[i][5] && typeof previrewExcel[i][5] === 'object') ? toValidString(previrewExcel[i][5].result) : toValidString(previrewExcel[i][5]),
-                                            value3: null,
-                                        });
-                                }
+                
+                        for (let i = 0; i < previrewExcel.length; i++) {
+                            if (previrewExcel[i][7] == true) {
+                                datapost.current.push(
+                                    {
+                                        id_report: null,
+                                        id_chitieu: previrewExcel[i][6],
+                                        value1: (previrewExcel[i][3] && typeof previrewExcel[i][3] === 'object') ? toValidString(previrewExcel[i][3].result) : toValidString(previrewExcel[i][3]),
+                                        value2: (previrewExcel[i][5] && typeof previrewExcel[i][5] === 'object') ? toValidString(previrewExcel[i][5].result) : toValidString(previrewExcel[i][5]),
+                                        value3: null,
+                                    });
                             }
                         }
+                        
 
                     } else if (previrewExcel[0].length > 8 && selectedFileType < 3) {
                         for (let i = 0; i < previrewExcel.length; i++) {
@@ -335,7 +309,33 @@ export default function FileInterface() {
                                     });
                             }
                         }
-                    } else {
+                    } else if(previrewExcel[0].length < 11 && selectedFileType ===3){
+                        if(quarter===2||quarter===3||quarter===4)
+                        {
+                            for (let i = 0; i < previrewExcel.length; i++) {
+                                // console.log(previrewExcel[i]);
+                                if (previrewExcel[i][9] == true) {
+                                    datapost.current.push(
+                                    {
+                                        id_report: null,
+                                        id_chitieu: previrewExcel[i][8],
+                                        value1: (previrewExcel[i][3] && typeof previrewExcel[i][3] === 'object') ? toValidString(previrewExcel[i][3].result) : toValidString(previrewExcel[i][3]),
+                                        value2: (previrewExcel[i][6] && typeof previrewExcel[i][6] === 'object') ? toValidString(previrewExcel[i][6].result) : toValidString(previrewExcel[i][6]),
+                                        value3: null,
+                                    });
+                                    datapostyear.current.push(
+                                    {
+                                        id_report: null,
+                                        id_chitieu: previrewExcel[i][8],
+                                        value1: (previrewExcel[i][4] && typeof previrewExcel[i][4] === 'object') ? toValidString(previrewExcel[i][4].result) : toValidString(previrewExcel[i][4]),
+                                        value2: (previrewExcel[i][7] && typeof previrewExcel[i][7] === 'object') ? toValidString(previrewExcel[i][7].result) : toValidString(previrewExcel[i][7]),
+                                        value3: null,
+                                    });
+
+                                }
+                            }
+                        }
+                    }else {
                         resetFileUpload();
                         confirmAlert({
                             title: 'Lỗi',
@@ -464,8 +464,9 @@ export default function FileInterface() {
             if(selectedFileType===3&&quarter>1)
             {
                 try {
+                    // --- 1. TẠO BÁO CÁO QUÝ ---
                     let response = await api.post("/reports", formData, {
-                        headers: {"Content-Type": "multipart/form-data"},
+                        headers: { "Content-Type": "multipart/form-data" },
                     });
                     if (response.data.message === 'duplicate') {
                         setLoadingGlobal(false);
@@ -473,68 +474,62 @@ export default function FileInterface() {
                         confirmAlert({
                             title: 'Lỗi',
                             message: '❌ Báo cáo này đã được nộp trước đó. Không thể nộp lại.',
-                            buttons: [
-                                {
-                                    label: 'OK', onClick: () => {
-                                    }
-                                }
-                            ]
+                            buttons: [{ label: 'OK' }]
                         });
-                        return; // dừng không tiếp tục xử lý
+                        return;
                     }
-                    // Nếu không duplicate, tiếp tục nộp dữ liệu
-                    for (let i = 0; i < datapost.current.length; i++) {
-                        datapost.current[i].id_report = response.data.id;
-                    }
-                    await api.post("/report-data-bulk-insert", {records: datapost.current});
+                    // Gán id_report cho data quý
+                    datapost.current.forEach(item => item.id_report = response.data.id);
+                    // Insert dữ liệu báo cáo quý
+                    await api.post("/report-data-bulk-insert", { records: datapost.current });
+                    // --- 2. TẠO BÁO CÁO NĂM ---
                     formData.set("id_loaibaocao", 4);
                     formData.delete("quarterly_report");
-                    if(quarter===2)
-                    {
-                        formData.append("number_report", 3);
-                    }else if(quarter===3){
-                        formData.append("number_report", 4);
-                    }else if(quarter===4){
-                        formData.append("number_report", 2);
-                    }
-                    // báo cao 2
+
+                    if (quarter === 2) formData.append("number_report", 3);
+                    else if (quarter === 3) formData.append("number_report", 4);
+                    else if (quarter === 4) formData.append("number_report", 2);
+
                     let response2 = await api.post("/reports", formData, {
-                        headers: {"Content-Type": "multipart/form-data"},
+                        headers: { "Content-Type": "multipart/form-data" },
                     });
 
-                    if (response.data.message === 'duplicate') {
+                    if (response2.data.message === 'duplicate') {
                         setLoadingGlobal(false);
                         setNextStep(true);
                         confirmAlert({
                             title: 'Lỗi',
                             message: '❌ Báo cáo này đã được nộp trước đó. Không thể nộp lại.',
-                            buttons: [
-                                {
-                                    label: 'OK', onClick: () => {
-                                    }
-                                }
-                            ]
+                            buttons: [{ label: 'OK' }]
                         });
-                        return; // dừng không tiếp tục xử lý
+                        return;
                     }
-                    // Nếu không duplicate, tiếp tục nộp dữ liệu
-                    for (let i = 0; i < datapostyear.current.length; i++) {
-                        datapostyear.current[i].id_report = response2.data.id;
-                    }
-                    await api.post("/report-data-bulk-insert", {records: datapostyear.current});
+
+                    // Gán id_report cho báo cáo năm
+                    datapostyear.current.forEach(item => item.id_report = response2.data.id);
+
+                    await api.post("/report-data-bulk-insert", { records: datapostyear.current });
+
+
+                    // --- 3. THÀNH CÔNG ---
                     confirmAlert({
                         title: 'Thông báo',
                         message: '📬 Báo cáo đã được nộp thành công!',
-                        buttons: [
-                            {
-                                label: 'OK', onClick: () => {
-                                }
-                            }
-                        ]
+                        buttons: [{ label: 'OK' }]
                     });
-                }catch (e) {
+
+                    setLoadingGlobal(false);
+
+                } catch (e) {
                     console.log(e);
+                    setLoadingGlobal(false);
+                    confirmAlert({
+                        title: 'Lỗi',
+                        message: '❌ Đã có lỗi xảy ra. Vui lòng thử lại sau.',
+                        buttons: [{ label: 'OK' }]
+                    });
                 }
+
             }else{
                 formData.forEach((value, key) => {
                     console.log(key, value);
@@ -645,6 +640,7 @@ export default function FileInterface() {
                             setSelectedFileType(selectedReports[0].id_loaibaocao);
                             setIsLate(selectedReports[0].islate);
                         } else if (selectedReports[0]?.id_loaibaocao === 3) {
+                            await fetchAndSetTime();
                             setQuarter(selectedReports[0].quarter);
                             setMonth(null);
                             setYear(year);
@@ -653,6 +649,7 @@ export default function FileInterface() {
                             setIsLate(selectedReports[0].islate);
                             setNumberYear(null);
                         } else if (selectedReports[0]?.id_loaibaocao === 4) {
+                            await fetchAndSetTime();
                             setNumberYear(selectedReports[0].quarter);
                             setQuarter(null);
                             setMonth(null);

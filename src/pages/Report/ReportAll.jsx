@@ -130,7 +130,14 @@ export default function ReportAll() {
             fetchStats();
         }
     }, [selectedFileType, year, month]);
-
+    const testcurrent= ()=>{
+       console.log(  year,
+                month,
+                quarter,
+                week,
+                selectedFileType,
+                number)
+    }
     // console.log(getVNWeekYear('2025-12-29'));
     const getCards = () => {
         const type = parseInt(selectedFileType);
@@ -168,7 +175,7 @@ export default function ReportAll() {
             not_submitted: report.stats?.not_submitted || [],
         });
         setSelectedReport(report);
-        // console.log(report);
+        console.log(report);
         setOpen(true);
     };
     const handleClose = () => {
@@ -321,10 +328,12 @@ export default function ReportAll() {
                                 </ul>
                             </div>
                         </div>
+                        {/* <button onClick={}>test </button> */}
                         <DownloadExcelButton
+
                             loaibaocaoId={selectedFileType}
                             year={year}
-                            month={(selectedFileType === 2)||(selectedFileType === 1) ? month : undefined}
+                            month={(selectedFileType === 2) ? selectedReport?.id : undefined}
                             number={selectedFileType === 4 ? selectedReport?.id : undefined}
                             quarter={selectedFileType === 3 ? selectedReport?.id : undefined}
                             week={selectedFileType === 1 ? selectedReport?.id : undefined}

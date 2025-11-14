@@ -47,7 +47,7 @@ const Home = () => {
                         <LiaPhoneAltSolid class=" text-black-500 text-7xl" />
 
                     </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Đóng góp ý kiến</h3>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Đóng góp ý kiến & Báo lỗi </h3>
                 </Link >
             )}
 

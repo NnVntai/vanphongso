@@ -72,7 +72,7 @@ export default function UpdateUserInfo() {
     };
 
     return (
-        <TableHearder title="Đóng góp ý kiến" backlink="/telephone">
+        <TableHearder title="Đóng góp ý kiến & Báo lỗi" backlink="/telephone">
 
             <Box  mx="auto"  class="w-full relative">
                 <Card elevation={3} maxWidth={600} mx="auto" class="bg-white ">
@@ -83,14 +83,14 @@ export default function UpdateUserInfo() {
                                 <TextField
                                     fullWidth
                                     required
-                                    label="Tiêu đề"
+                                    label="Tiêu đề gửi"
 
                                     onChange={(e) => handleChange("title", e.target.value)}
                                 />
                             </Stack>
                             <Stack direction="row" spacing={2}>
                                 <TextField
-                                    label="Nội dung"
+                                    label="Nội dung gửi"
                                     fullWidth
                                     required
                                     multiline
