@@ -96,7 +96,7 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
             const response = await api.post('/chitieu/dulieuxuatbaocao', {
                 year,
                 month,
-                quarter,
+                quarterly:quarter,
                 week,
                 loaibaocao_id:loaibaocaoId,
                 number,
@@ -107,6 +107,7 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
               'week '+   week,
                'loaibaocaoId '+  loaibaocaoId,
               'number '+   number)
+              console.log(response);
             let namefile="";
             const tables = [];
             const rawData = response.data.data;
@@ -124,7 +125,7 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
                 currentGroup.push(chitieu);
             }
             if (currentGroup.length > 0) tables.push(currentGroup);
-            console.log(tables);
+            // console.log(tables);
             // Prepare data for export
             const preparedData = tables.map((group, idx) => {
                 const xaList = group[0].xa.map((x) => x.ten_xa);
@@ -137,44 +138,35 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
                 let headerRow06=[];
                 if( loaibaocaoId === 1 )
                 {
-                    namefile=[`(Tuần ${week}-${month}-${year})`];
+                    namefile=[`(Tuần ${week}-${year})`];
                     headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP TUẦN ${week}`, '', '']
                 }else if(loaibaocaoId=== 2){
-                    if(month===3)
+         
+                    namefile=[`(Tháng ${month}-${year})`];
+                    headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP THÁNG ${month}`, '', ''];
+                    
+                }else if(loaibaocaoId=== 3){
+                    headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP QUÝ ${quarter}`, '', '']
+                    namefile=[`(Quý ${quarter}-${year})`];
+              
+                }else if(loaibaocaoId=== 4){
+                    if(number===1||number===2)
                     {
-                        namefile=[`(Quý 1-${year})`];
-                        headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP QUÝ 1`, '', ''];
-                    }else if(month===6){
+                        headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP LẦN ${number} NĂM ${year}`, '', '']
+                        namefile= [`(Lần ${number}-${year})`];
+                    }
+                    else if(number===3){
                         namefile=[`(6 Tháng-${year})`];
                         headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP 6 THÁNG`, '', ''];
-                    }else if(month===9){
+                    }else if(number===4){
                         namefile=[`(9 Tháng-${year})`];
                         headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP 9 THÁNG`, '', ''];
                     }else {
-                        namefile=[`(Tháng ${month}-${year})`];
-                        headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP THÁNG ${month}`, '', ''];
+
                     }
-                }else if(loaibaocaoId=== 3){
-                    if(quarter===1)
-                    {
-                        headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP QUÝ ${number}`, '', '']
-                        namefile=[`(Quý ${quarter}-${year})`];
-                    }else if(quarter===2){
-                        namefile=[`(6 tháng-${year})`];
-                        headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP 6 THÁNG`, '', '']
-                    }else if(quarter===3){
-                        namefile=[`(9 tháng-${year})`];
-                        headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP 9 THÁNG`, '', '']
-                    }else {
-                        namefile=[`(Quý ${quarter}-${year})`];
-                        headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP QUÝ ${quarter} NĂM ${year}`, '', '']
-                    }
-                }else if(loaibaocaoId=== 4){
-                    headerRow02=[`BÁO CÁO ƯỚC KẾT QUẢ SẢN XUẤT NÔNG, LÂM, NGƯ NGHIỆP LẦN ${number} NĂM ${year}`, '', '']
-                    namefile= [`(Lần ${number}-${year})`];
                 }
                 let numbercol
-
+ 
                 if(loaibaocaoId===1)
                 {   numbercol = 10;
                     headerRow04=[1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -275,7 +267,7 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
 
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet('Sheet 1');
-            console.log(rawData);
+            // console.log(rawData);
             // console.log(preparedData[0]);
             // Iterate through the data and set the formulas for specific cells
             preparedData[0].forEach((row, rowIndex) => {

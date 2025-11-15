@@ -12,6 +12,8 @@ import {
     TableHead,
     TableBody,
     TableCell,
+    Autocomplete,
+    TextField ,
     TableRow,
     Modal,
     IconButton,
@@ -28,8 +30,39 @@ const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
 const months = Array.from({ length: 12 }, (_, i) => i + 1);
 const quarters = [1, 2, 3, 4];
-// const weeks = [1, 2, 3, 4, 5];
+// const weeks = [];
 const numberYears = [1, 2];
+function getWeeksOfYear(year) {
+    const weeks = [];
+    const startDate = new Date(year, 0, 1); // 1/1
+    const endDate = new Date(year, 11, 31); // 31/12
+
+    // Lấy thứ của 1/1 (0=CN → đưa về 1,7)
+    let dayOfWeek = startDate.getDay();
+    if (dayOfWeek === 0) dayOfWeek = 7;
+
+    // Ngày bắt đầu tuần 1 = 1/1 - (dayOfWeek - 1)
+    let weekStart = new Date(year, 0, 1 - (dayOfWeek - 1));
+
+    let weekNum = 1;
+
+    while (weekStart <= endDate) {
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
+
+        weeks.push({
+            week: weekNum,
+            start: new Date(weekStart),
+            end: new Date(weekEnd)
+        });
+
+        weekStart.setDate(weekStart.getDate() + 7);
+        weekNum++;
+    }
+
+    return weeks;
+}
+
 // Axios instance with auth header interceptor
 export default function ReportAdmin() {
     /* -------------------- Local state -------------------- */
@@ -37,6 +70,7 @@ export default function ReportAdmin() {
     const [fileTypes, setFileTypes] = useState([]);
     const [selectedFileType, setSelectedFileType] = useState("");
     const [week, setWeek] = useState("");
+    const [weeks, setWeeks] = useState([]);
     const [month, setMonth] = useState("");
     const [quarter, setQuarter] = useState("");
     const [year, setYear] = useState(currentYear);
@@ -110,14 +144,58 @@ export default function ReportAdmin() {
     // Re‑fetch reports when any filter changes
     useEffect(() => {
         fetchReports();
+       
+         if(selectedFileType===1){
+            // setWeek(week);
+            setMonth(null);
+            // setYear();
+            setNumberYear(null);
+            setQuarter(null);
+
+        }
+        else if(selectedFileType===2){
+            setWeek(null);
+            // setMonth();
+            // setYear();
+            setNumberYear(null);
+            setQuarter(null);
+        }
+        else if(selectedFileType===3){
+            setWeek(null);
+            setMonth(null);
+            // setYear();
+            setNumberYear(null);
+            // setQuarter();
+        }else if(selectedFileType==4){
+            setWeek(null);
+            setMonth(null);
+            // setYear();
+            // setNumberYear();
+            setQuarter(null);
+        }else{
+            setWeek(null);
+            setMonth(null);
+            // setYear();
+            setNumberYear(null);
+            setQuarter(null);
+        }
+  
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedFileType, week, month, quarter, year, selectedCommune,numberYear]);
 
+     useEffect(() => {
+        if(selectedFileType===1)
+        {
+            setWeeks(getWeeksOfYear(year));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [year,selectedFileType]);
     /* -------------------- Modal handlers -------------------- */
     const handleOpen = (report) => {
         setSelectedReport(report);
         setOpen(true);
     };
+
     const handleClose = () => {
         setOpen(false);
         setSelectedReport(null);
@@ -178,45 +256,45 @@ export default function ReportAdmin() {
                         </Grid>
 
                         {/* ----------- NEW: Xã ----------- */}
-                        <Grid item xs={12} sm={4} md={3} lg={2} sx={{ minWidth: 150 }}>
-                            <FormControl fullWidth>
-                                <InputLabel>Xã</InputLabel>
-                                <Select
-                                    label="Xã"
-                                    value={selectedCommune}
-                                    onChange={(e) => setSelectedCommune(e.target.value)}
-                                >
-                                    <MenuItem value="">Tất cả</MenuItem>
-                                    {communes.map((xa) => (
-                                        <MenuItem key={xa.id} value={xa.id}>
-                                            {xa.ten_xa || xa.name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
+                        <Grid item xs={12} sm={4} md={3} lg={2} sx={{ minWidth: 250 }}>
+                            <Autocomplete
+                                fullWidth
+                                options={communes}
+                                getOptionLabel={(option) => option.ten_xa || option.name}
+                                value={communes.find(x => x.id === selectedCommune) || null}
+                                onChange={(e, newValue) => setSelectedCommune(newValue ? newValue.id : "")}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Xã"
+                                        placeholder="Nhập để tìm..."
+                                    />
+                                )}
+                            />
+
                         </Grid>
 
-                        {/*{selectedType === 1 && (*/}
-                        {/*    <Grid item xs={6} sm={3} md={2} sx={{ minWidth: 150 }}>*/}
-                        {/*        <FormControl fullWidth>*/}
-                        {/*            <InputLabel>Tuần</InputLabel>*/}
-                        {/*            <Select*/}
-                        {/*                label="Tuần"*/}
-                        {/*                value={week}*/}
-                        {/*                onChange={(e) => setWeek(e.target.value)}*/}
-                        {/*            >*/}
-                        {/*                <MenuItem value="">Tất cả</MenuItem>*/}
-                        {/*                {weeks.map((w) => (*/}
-                        {/*                    <MenuItem key={w} value={w}>*/}
-                        {/*                        Tuần {w}*/}
-                        {/*                    </MenuItem>*/}
-                        {/*                ))}*/}
-                        {/*            </Select>*/}
-                        {/*        </FormControl>*/}
-                        {/*    </Grid>*/}
-                        {/*)}*/}
+                        {selectedType === 1 && (
+                           <Grid item xs={6} sm={3} md={2} sx={{ minWidth: 150 }}>
+                               <FormControl fullWidth>
+                                   <InputLabel>Tuần</InputLabel>
+                                   <Select
+                                       label="Tuần"
+                                        value={week}
+                                       onChange={(e) => setWeek(e.target.value)}
+                                  >
+                                      <MenuItem value="">Tất cả</MenuItem>
+                                       {weeks.map((w) => (
+                                          <MenuItem key={w.week} value={w.week}>
+                                               Tuần {w.week}
+                                           </MenuItem>
+                                        ))}
+                                  </Select>
+                              </FormControl>
+                          </Grid>
+                        )} 
 
-                        {(selectedType === 1 || selectedType === 2) && (
+                        {( selectedType === 2) && (
                             <Grid item xs={6} sm={3} md={2} sx={{ minWidth: 150 }}>
                                 <FormControl fullWidth>
                                     <InputLabel>Tháng</InputLabel>

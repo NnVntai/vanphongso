@@ -677,7 +677,7 @@ export default function ReportHistory() {
                         {/*    </Grid>*/}
                         {/*)}*/}
 
-                        {(selectedType === 1 || selectedType === 2) && (
+                        {( selectedType === 2) && (
                             <Grid item xs={6} sm={3} md={2} sx={{ minWidth: 150 }}>
                                 <FormControl fullWidth>
                                     <InputLabel>Tháng</InputLabel>
