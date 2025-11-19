@@ -227,7 +227,7 @@ const ReportNotificationWeekForm = ({ notification, onUpdate }) => {
                         {/* Số giờ trước deadline để nhắc nhở */}
                         <Grid item xs={12} sm={6} className="w-full">
                             <TextField
-                                label="Thời gian trì hoãn (delay) thông báo lần 1"
+                                label="Thời gian trì hoãn (delay) thông báo "
                                 type="number"
                                 name="reminder_after_hours"
                                 value={formData.reminder_after_hours} // thong báo trước hạn cụ thể là vài tiếng trước khi hết hạn
@@ -238,7 +238,7 @@ const ReportNotificationWeekForm = ({ notification, onUpdate }) => {
                                 }}
                             />
                         </Grid>
-                        <Grid item xs={12} sm={6} className="w-full">
+                        {/* <Grid item xs={12} sm={6} className="w-full">
                             <TextField
                                 label="Thời gian thông báo nhắc nhở lần 2"
                                 type="number"
@@ -250,7 +250,7 @@ const ReportNotificationWeekForm = ({ notification, onUpdate }) => {
                                     startAdornment: <InputAdornment position="start">Giờ</InputAdornment>,
                                 }}
                             />
-                        </Grid>
+                        </Grid> */}
                         <Grid item xs={12} className="w-full">
                             <TextField
                                 label="Nội dung thông báo"
@@ -288,9 +288,9 @@ const ReportNotificationWeekForm = ({ notification, onUpdate }) => {
                                 <Typography variant="subtitle1">
                                     ⏳ Thời gian thông báo đến người dùng lần 1: <strong>{notificationAfterTime}</strong>
                                 </Typography>
-                                <Typography variant="subtitle1">
+                                {/* <Typography variant="subtitle1">
                                     ⏳ Thời gian thông báo nhắc nhở nộp báo cáo lần 2: <strong>{notificationTime}</strong>
-                                </Typography>
+                                </Typography> */}
                             </>
                         )}
                         {/* Nút Cập nhật */}

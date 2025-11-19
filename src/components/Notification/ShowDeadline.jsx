@@ -194,6 +194,7 @@ const ReportNotificationScheduler = ({
           ...expandedMonthly,       // 🔥 tháng chưa nộp
           ...otherReports           // các báo cáo bình thường
         ]);
+
         setSubmittedReports(oldReport);
       } catch (err) {
         console.error("Lỗi khi tải thông báo:", err);
@@ -297,6 +298,7 @@ const ReportNotificationScheduler = ({
     if (!noti) return;
 
     const result = calculateTimes(noti);
+    console.log(result);
     const isOverdue = result.countdown === "Đã quá hạn";
 
     // Cho chọn nếu:

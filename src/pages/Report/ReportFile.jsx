@@ -394,10 +394,10 @@ export default function FileInterface() {
         fetchFileTypes();
     }, []);
 
-    useEffect(() => {
-    //     console.log(year,month,week,quarter,selectedFileType);
-           console.log("year "+ year,"month " +month, "quarter "+ quarter,"numberYear " +numberYear,"week "+ week);
-    }, [year,month,week,quarter,numberYear,selectedFileType]);
+    // useEffect(() => {
+    // //     console.log(year,month,week,quarter,selectedFileType);
+    //        console.log("year "+ year,"month " +month, "quarter "+ quarter,"numberYear " +numberYear,"week "+ week);
+    // }, [year,month,week,quarter,numberYear,selectedFileType]);
     const checkClickSend = async () => {
 
         if (!selectedFileType || !year ||!fileName||
@@ -448,7 +448,7 @@ export default function FileInterface() {
         formData.append("filename", file);
         formData.append("id_loaibaocao", selectedFileType);
         formData.append("year_report", year);
-        formData.append("islate", isLate);
+        formData.append("islate", isLate ? 1 : 0);
         if(selectedFileType===1){
             if (week) formData.append("week_report", week);
             // if (month) formData.append("month_report", month);
@@ -620,7 +620,7 @@ export default function FileInterface() {
             <div className="bg-white">
                 <Box maxWidth="sx" mx="auto" p={3}>
                     <StepWizard selectedReports={ async (selectedReports) =>{
-                        // console.log(selectedReports);
+                        console.log(selectedReports);
                         if (selectedReports[0]?.id_loaibaocao === 1) {
                             await fetchAndSetTime();
                             setQuarter(null);

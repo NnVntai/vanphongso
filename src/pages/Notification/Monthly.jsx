@@ -253,7 +253,7 @@ const ReportNotificationWeekForm = ({ notification, onUpdate }) => {
                                 }}
                             />
                         </Grid>
-                        <Grid item xs={12} sm={6} className="w-full">
+                        {/* <Grid item xs={12} sm={6} className="w-full">
                             <TextField
                                 label="Thời gian thông báo nhắc nhở lần 2"
                                 type="number"
@@ -265,7 +265,7 @@ const ReportNotificationWeekForm = ({ notification, onUpdate }) => {
                                     startAdornment: <InputAdornment position="start">Giờ</InputAdornment>,
                                 }}
                             />
-                        </Grid>
+                        </Grid> */}
                         <Grid item xs={12} className="w-full">
                             <TextField
                                 label="Nội dung thông báo"
@@ -303,9 +303,9 @@ const ReportNotificationWeekForm = ({ notification, onUpdate }) => {
                                 <Typography variant="subtitle1">
                                     ⏳ Thời gian thông báo đến người dùng lần 1: <strong>{notificationAfterTime}</strong>
                                 </Typography>
-                                <Typography variant="subtitle1">
+                                {/* <Typography variant="subtitle1">
                                     ⏳ Thời gian thông báo nhắc nhở nộp báo cáo lần 2: <strong>{notificationTime}</strong>
-                                </Typography>
+                                </Typography> */}
                             </>
                         )}
                         {/* Nút Cập nhật */}

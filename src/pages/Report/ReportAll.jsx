@@ -109,7 +109,7 @@ export default function ReportAll() {
             };
             const { data } = await api.get("/report/checkthongke", { params });
             setStatsData(data);
-            // console.log(data);
+            console.log(data);
         } catch (err) {
             console.error("Lỗi khi tải thống kê:", err);
         } finally {
@@ -312,7 +312,8 @@ export default function ReportAll() {
                                 </Typography>
                                 <ul className="list-disc list-inside text-green-700">
                                     {(reportStats.submitted || []).map((xa) => (
-                                        <li key={xa.id}>{xa.ten_xa}</li>
+                                        
+                                        <li key={xa.id} className={xa.is_late?"text-blue-700":"text-green-700"}>{xa.ten_xa}</li>
                                     ))}
                                 </ul>
                             </div>
