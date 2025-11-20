@@ -6,8 +6,8 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const api = axios.create({
   // baseURL: 'http://123.25.238.108:8092/api',
-  // baseURL: 'http://localhost:8081/api',
-  baseURL: 'https://tknn.ttcntnmt.com.vn/api',
+  baseURL: 'http://localhost:8081/api',
+  // baseURL: 'https://tknn.ttcntnmt.com.vn/api',
 });
 
 // Interceptor request để check token
@@ -34,11 +34,9 @@ api.interceptors.request.use(
                 }
               ]
             });
-
             // Dừng request bằng cách throw lỗi
             throw new axios.Cancel('Token expired');
           }
-
           // Token còn hạn → thêm vào header
           config.headers.Authorization = `Bearer ${token}`;
         } catch (err) {

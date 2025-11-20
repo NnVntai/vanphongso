@@ -32,7 +32,7 @@ export default function UpdateUserInfo() {
           id:data.id,
           email: data.email || "",
           name: data.name || "",
-          phone: data.phone || "",
+          phone:data.phone || "",
           position: data.position || "",
         });
       } catch (err) {
@@ -69,6 +69,7 @@ export default function UpdateUserInfo() {
           onClick: async () => {
             try {
               setLoading(true);
+              form.phone=Number(form.phone);
               const user=await api.put(`/users/update/${form.id}`, form);
               localStorage.setItem('username',JSON.stringify(user.data));
               confirmAlert({
@@ -78,6 +79,7 @@ export default function UpdateUserInfo() {
               });
 
             } catch (err) {
+              console.log(err);
               confirmAlert({
                 title: "Lỗi",
                 message: "Cập nhật thất bại: " + err.message,

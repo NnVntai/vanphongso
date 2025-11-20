@@ -217,7 +217,8 @@ const ReportNotificationWeekForm = ({ notification, onUpdate }) => {
                 buttons: [{ label: "OK", onClick: () => {} }],
             });
             return;
-        }else if(formData.deadline===""||formData.reminder_before_hours===""||formData.reminder_after_hours===""||formData.start_day===""||formData.description===""||formData.id_loaibaocao===""){
+        }else if(formData.deadline===""||formData.reminder_after_hours===""||formData.start_day===""||formData.description===""||formData.id_loaibaocao===""){
+            // console.log(formData);
             confirmAlert({
                 title: "Lỗi",
                 message: "Vui lòng nhập đầy đủ thông tin.",
