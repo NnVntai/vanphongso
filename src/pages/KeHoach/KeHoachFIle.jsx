@@ -291,14 +291,19 @@ export default function FileInterface() {
             >
                 <DialogTitle>Xác nhận nộp kết hoạch chỉ tiêu </DialogTitle>
                 <DialogContent>
-                    <Grid container spacing={2}>
+                   <Grid container spacing={2}>
                         <Grid item xs={12} md={4}>
                             <Typography><strong>Năm:</strong> {year}</Typography>
                             <Typography><strong>File:</strong> {fileName}</Typography>
                         </Grid>
+
                         <Grid item xs={12} md={8}>
+                            {/* <!-- phần khác nếu muốn --> */}
+                        </Grid>
+
+                        <Grid item xs={12} md={8} sx={{ width: "100%" }}>
                             <Typography mb={1}><strong>Xem trước nội dung:</strong></Typography>
-                            <Box id="handsontable-preview" sx={{ width: "100%", overflowX: "auto" }} />
+                            <Box id="handsontable-preview" sx={{ width: "800px", overflowX: "auto" }} />
                         </Grid>
                     </Grid>
                 </DialogContent>

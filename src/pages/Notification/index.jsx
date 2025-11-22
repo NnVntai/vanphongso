@@ -33,7 +33,7 @@ const Home = () => {
                             <LuCalendar1  class=" text-black-500 text-7xl" />
                             <i class="fas fa-home text-blue-500 text-4xl"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Thông báo theo Tháng & Quý</h3>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Thông báo theo Tháng</h3>
 
                     </Link >
                 )}

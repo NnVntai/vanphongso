@@ -144,7 +144,7 @@ const ReportNotificationScheduler = ({
           pendingWeeks.forEach(({ year, week }) => {
             expandedWeekly.push({
               ...wItem,
-              isGeneratedWeek: true,
+              isGeneratedWeek: false,
               customWeek: week,
               customYear: year
             });
@@ -167,13 +167,18 @@ const ReportNotificationScheduler = ({
             allMonths.push({ year: y, month: m });
           }
         }
-        const pendingMonths = allMonths.filter(({ year, month }) => {
-          return !oldReport.some(r =>
-            r.id_loaibaocao === 2 &&
-            r.year_report === year &&
-            r.month_report === month
-          );
-        });
+     const pendingMonths = allMonths
+      .filter(({ year, month }) => {
+        const alreadySubmitted = oldReport.some(r =>
+          r.id_loaibaocao === 2 &&
+          r.year_report === year &&
+          r.month_report === month
+        );
+
+        const isCurrentMonth = (year === currentYear && month === currentMonth);
+
+        return !alreadySubmitted && !isCurrentMonth;
+      });
         // console.log(pendingMonths,pendingWeeks);
         const monthlyTemplate = data.find(d => d.id_loaibaocao === 2);
         const expandedMonthly = [];
@@ -182,7 +187,7 @@ const ReportNotificationScheduler = ({
           pendingMonths.forEach(({ year, month }) => {
             expandedMonthly.push({
               ...monthlyTemplate,
-              isGeneratedMonth: true,
+              isGeneratedMonth: false,
               customMonth: month,
               customYear: year
             });
@@ -298,7 +303,7 @@ const ReportNotificationScheduler = ({
     if (!noti) return;
 
     const result = calculateTimes(noti);
-    console.log(result);
+    // console.log(result);
     const isOverdue = result.countdown === "Đã quá hạn";
 
     // Cho chọn nếu:
@@ -386,7 +391,7 @@ const ReportNotificationScheduler = ({
           {notifications.map((item, index) => {
             const key = `${item.id}-${index}`;
             const result = calculateTimes(item);
-
+           
             if (!result.nextNotifyDate) return null;
 
             // Parse ngày => lấy tuần/tháng dùng để hiển thị
@@ -396,7 +401,7 @@ const ReportNotificationScheduler = ({
 
             const getMonthIn = dateAll.month() + 1;
             const getWeekIn = dateAll.week();
-
+         
             // ================================
             // KIỂM TRA ĐÃ NỘP (WEEK + MONTH)
             // ================================
