@@ -375,13 +375,15 @@ export default function FileInterface() {
     };
     const fetchAndSetTime = async () => {
         const result = await getTimeInfo();  // ← Lấy dữ liệu từ API thời gian
+        // console.log(result);
         if (result && result.isTimeAccurate) {
             setYear(result.year);
             setMonth(result.month);
             setWeek(result.week);
             setQuarter(result.quarter);
+             console.log(year,month, quarter,week);
         }
-        // console.log(result);
+       
     };
     // LOAD LẦN ĐẦU
     useEffect(() => {
@@ -399,7 +401,6 @@ export default function FileInterface() {
     //        console.log("year "+ year,"month " +month, "quarter "+ quarter,"numberYear " +numberYear,"week "+ week);
     // }, [year,month,week,quarter,numberYear,selectedFileType]);
     const checkClickSend = async () => {
-
         if (!selectedFileType || !year ||!fileName||
             (selectedType === 1 && !week) ||
             (selectedType === 2 && !month) ||
@@ -420,6 +421,9 @@ export default function FileInterface() {
         setOpenDialog(true);
 
     }
+    useEffect(() => {
+        console.log("File type changed:", selectedFileType);
+        }, [selectedFileType]);
     const handleSubmitReport = async () => {
         setLoadingGlobal(true);
         const file = inputRef.current?.files[0];
@@ -622,43 +626,78 @@ export default function FileInterface() {
                     <StepWizard selectedReports={ async (selectedReports) =>{
                         console.log(selectedReports);
                         if (selectedReports[0]?.id_loaibaocao === 1) {
-                            await fetchAndSetTime();
-                            setQuarter(null);
-                            setNumberYear(null);
-                            setMonth(null);
-                            setYear(selectedReports[0]?.customYear===undefined?year:selectedReports[0]?.customYear);
-                            setWeek(selectedReports[0]?.customWeek === undefined?week:selectedReports[0].customWeek);
-                            setSelectedFileType(selectedReports[0].id_loaibaocao);
-                            setIsLate(selectedReports[0].islate);
+                            const res = await getTimeInfo();
+                            if(res){
+                                setYear(res.year);
+                                setMonth(res.month);
+                                setWeek(res.week);
+                                setQuarter(res.quarter);
+                                setQuarter(null);
+                                setNumberYear(null);
+                                setMonth(null);
+                                setYear(selectedReports[0]?.customYear===undefined?year:selectedReports[0]?.customYear);
+                                setWeek(selectedReports[0]?.customWeek === undefined?week:selectedReports[0].customWeek);
+                                setSelectedFileType(1);
+                                setIsLate(selectedReports[0].islate);
+                            }
                         } else if (selectedReports[0]?.id_loaibaocao === 2) {
-                            await fetchAndSetTime();
-                            setQuarter(null);
-                            setWeek(null);
-                            setNumberYear(null);
-                            setMonth(selectedReports[0]?.customMonth === undefined?month:selectedReports[0].customMonth);
-                            setYear(selectedReports[0]?.customYear===undefined?year:selectedReports[0]?.customYear);
-                            setSelectedFileType(selectedReports[0].id_loaibaocao);
-                            setIsLate(selectedReports[0].islate);
+                            // await fetchAndSetTime();
+                            const res = await getTimeInfo();
+                            if(res){
+                                setYear(res.year);
+                                setMonth(res.month);
+                                setWeek(res.week);
+                                setQuarter(res.quarter);
+
+                                // LOGIC xử lý dùng res.year thay vì year
+                                if(selectedReports[0]?.id_loaibaocao === 2){
+                                   setQuarter(null);
+                                    setWeek(null);
+                                    setNumberYear(null);
+                                    setMonth(selectedReports[0]?.customMonth === undefined?month:selectedReports[0].customMonth);
+                                    setYear(selectedReports[0]?.customYear===undefined?year:selectedReports[0]?.customYear);
+                                    setSelectedFileType(2);
+                                    setIsLate(selectedReports[0].islate);
+                                    // console.log(month,year,selectedFileType)
+                                }
+                            }else{
+
+                            }
+            
                         } else if (selectedReports[0]?.id_loaibaocao === 3) {
-                            await fetchAndSetTime();
-                            setQuarter(selectedReports[0].quarter);
-                            setMonth(null);
-                            setYear(year);
-                            setWeek(null);
-                            setSelectedFileType(selectedReports[0].id_loaibaocao);
-                            setIsLate(selectedReports[0].islate);
-                            setNumberYear(null);
+                            const res = await getTimeInfo();
+                            if(res){
+                                setYear(res.year);
+                                setMonth(res.month);
+                                setWeek(res.week);
+                                setQuarter(res.quarter);
+                                setQuarter(selectedReports[0].quarter);
+                                setMonth(null);
+                                setYear(year);
+                                setWeek(null);
+                                setSelectedFileType(3);
+                                setIsLate(selectedReports[0].islate);
+                                setNumberYear(null);
+                            }else{
+
+                            }
                         } else if (selectedReports[0]?.id_loaibaocao === 4) {
-                            await fetchAndSetTime();
-                            setNumberYear(selectedReports[0].quarter);
-                            setQuarter(null);
-                            setMonth(null);
-                            setWeek(null);
-                            setYear(year);
-                            setSelectedFileType(selectedReports[0].id_loaibaocao);
-                            setIsLate(selectedReports[0].islate);
+                              const res = await getTimeInfo();
+                            if(res){
+                                await fetchAndSetTime();
+                                setNumberYear(selectedReports[0].quarter);
+                                setQuarter(null);
+                                setMonth(null);
+                                setWeek(null);
+                                setYear(year);
+                                setSelectedFileType(4);
+                                setIsLate(selectedReports[0].islate);
+                            }else{
+
+                            }
                         } else {
                             setSelectedFileType();
+                            console.log("ello");
                         }
                         // console.log("year "+ year,"month " +month, "quarter "+ quarter,"numberYear " +numberYear,"week "+ week);
                     }}

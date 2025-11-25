@@ -387,231 +387,236 @@ const ReportNotificationScheduler = ({
           <CircularProgress />
         </Box>
       ) : (
-        <Grid container spacing={3} justifyContent="center" alignItems="stretch">
-          {notifications.map((item, index) => {
-            const key = `${item.id}-${index}`;
-            const result = calculateTimes(item);
-           
-            if (!result.nextNotifyDate) return null;
+        <Box
+        sx={{
+          maxHeight: "50vh",
+          overflowY: "auto",
+          pr: 1,
+        }}
+      >
+          <Grid container spacing={3} justifyContent="center" alignItems="stretch">
+            {notifications.map((item, index) => {
+              const key = `${item.id}-${index}`;
+              const result = calculateTimes(item);
+            
+              if (!result.nextNotifyDate) return null;
 
-            // Parse ngày => lấy tuần/tháng dùng để hiển thị
-            const clean = result.nextNotifyDate.split(", ")[1];
-            const parsed = dayjs(clean, "DD/MM/YYYY HH:mm");
-            const dateAll = dayjs(parsed);
+              // Parse ngày => lấy tuần/tháng dùng để hiển thị
+              const clean = result.nextNotifyDate.split(", ")[1];
+              const parsed = dayjs(clean, "DD/MM/YYYY HH:mm");
+              const dateAll = dayjs(parsed);
 
-            const getMonthIn = dateAll.month() + 1;
-            const getWeekIn = dateAll.week();
-         
-            // ================================
-            // KIỂM TRA ĐÃ NỘP (WEEK + MONTH)
-            // ================================
-            const isSubmitted = submittedReports.some((r) => {
+              const getMonthIn = dateAll.month() + 1;
+              const getWeekIn = dateAll.week();
+          
+              // ================================
+              // KIỂM TRA ĐÃ NỘP (WEEK + MONTH)
+              // ================================
+              const isSubmitted = submittedReports.some((r) => {
 
-              // --- TUẦN ---
-              if (item.id_loaibaocao === 1) {
-                return (
-                  r.id_loaibaocao === 1 &&
-                  r.week_report === item.customWeek &&
-                  r.year_report === item.customYear
-                );
-              }
-
-              // --- THÁNG ---
-              if (item.id_loaibaocao === 2) {
-                return (
-                  r.id_loaibaocao === 2 &&
-                  r.month_report === (item.customMonth || getMonthIn) &&
-                  r.year_report === (item.customYear || dayjs().year())
-                );
-              }
-               if (item.id_loaibaocao === 3) {
-                // console.log(item);
-                return (
-                  r.id_loaibaocao === 3 &&
-                  r.quarterly_report === (item.quarter)&&
-                  r.year_report === (item.customYear || dayjs().year())
-                );
-              }
-               if (item.id_loaibaocao === 4) {
-                return (
-                  r.id_loaibaocao === 4 &&
-                  r.number_report === (item.quarter) &&
-                  r.year_report === (item.customYear || dayjs().year())
-                );
-              }
-
-              return false;
-            });
-
-            const isSelected = selectedItemId === key;
-            const isOverdue =
-              result.countdown === "Đã quá hạn" ||
-              item.isGeneratedWeek ||
-              item.isGeneratedMonth;
-
-            // ====================================
-            // TẠO LABEL HIỂN THỊ TÊN BÁO CÁO
-            // ====================================
-            const reportName = (() => {
-              const base = reportMapName[item.id_loaibaocao] || "Báo cáo";
-
-              // ====== 1️⃣ BÁO CÁO TUẦN ======
-              if (item.id_loaibaocao === 1) {
-                if (item.isGeneratedWeek && item.customWeek && item.customYear) {
-                  return `${base} - Tuần ${item.customWeek}/${item.customYear}`;
+                // --- TUẦN ---
+                if (item.id_loaibaocao === 1) {
+                  return (
+                    r.id_loaibaocao === 1 &&
+                    r.week_report === item.customWeek &&
+                    r.year_report === item.customYear
+                  );
                 }
-                return `${base} - Tuần ${getWeekIn}`;
+
+                // --- THÁNG ---
+                if (item.id_loaibaocao === 2) {
+                  return (
+                    r.id_loaibaocao === 2 &&
+                    r.month_report === (item.customMonth || getMonthIn) &&
+                    r.year_report === (item.customYear || dayjs().year())
+                  );
+                }
+                if (item.id_loaibaocao === 3) {
+                  // console.log(item);
+                  return (
+                    r.id_loaibaocao === 3 &&
+                    r.quarterly_report === (item.quarter)&&
+                    r.year_report === (item.customYear || dayjs().year())
+                  );
+                }
+                if (item.id_loaibaocao === 4) {
+                  return (
+                    r.id_loaibaocao === 4 &&
+                    r.number_report === (item.quarter) &&
+                    r.year_report === (item.customYear || dayjs().year())
+                  );
+                }
+
+                return false;
+              });
+
+              const isSelected = selectedItemId === key;
+              const isOverdue =
+                result.countdown === "Đã quá hạn" ||
+                item.isGeneratedWeek ||
+                item.isGeneratedMonth;
+
+              // ====================================
+              // TẠO LABEL HIỂN THỊ TÊN BÁO CÁO
+              // ====================================
+              const reportName = (() => {
+                const base = reportMapName[item.id_loaibaocao] || "Báo cáo";
+
+                // ====== 1️⃣ BÁO CÁO TUẦN ======
+                if (item.id_loaibaocao === 1) {
+                  if (item.isGeneratedWeek && item.customWeek && item.customYear) {
+                    return `${base} - Tuần ${item.customWeek}/${item.customYear}`;
+                  }
+                  return `${base} - Tuần ${getWeekIn}`;
+                }
+
+                // ====== 2️⃣ BÁO CÁO THÁNG ======
+                if (item.id_loaibaocao === 2) {
+                  const m = item.customMonth || getMonthIn;
+                  const y = item.customYear || dayjs().year();
+
+                  const label =
+                    `Tháng ${m}`;
+
+                  return `${base} - ${label} (${y})`;
+                }
+
+                // ====== 3️⃣ BÁO CÁO QUÝ ======
+                if (item.id_loaibaocao === 3 && item.quarter) {
+                  return `${base} - ${
+                    item.quarter === 1
+                      ? "Quý I"
+                      : item.quarter === 2
+                      ? "Quý II - Báo cáo 06 tháng"
+                      : item.quarter === 3
+                      ? "Quý III - Báo cáo 09 tháng"
+                      : "Quý IV - Báo cáo Năm lần 2"
+                  }`;
+                }
+
+                // ====== 4️⃣ BÁO CÁO NĂM ======
+                if (item.id_loaibaocao === 4 && item.quarter) {
+                  return `${base} - Lần ${item.quarter}`;
+                }
+
+                return base;
+              })();
+
+              // =============================
+              // TẠO TEXT TRẠNG THÁI HIỂN THỊ
+              // =============================
+              let statusText, statusColor;
+
+              if (isSubmitted) {
+                statusText = "✅ Đã nộp";
+                statusColor = "success.main";
+              } else if (isOverdue) {
+                statusText = "🔴 Đã quá hạn";
+                statusColor = "error.main";
+              } else if (result.isInProgress) {
+                statusText = "🟡 Đang trong hạn nộp";
+                statusColor = "warning.main";
+              } else {
+                statusText = "🟢 Chưa đến kỳ";
+                statusColor = "success.main";
               }
+              return (
+                <Grid item xs={12} sm={6} md={4} key={key}>
+                  <Card
+                    onClick={() => {
+                      if (!isSubmitted) handleSelect(key);
+                    }}
+                    variant="outlined"
+                    sx={{
+                      height: "100%",
+                      borderColor: isSelected ? "primary.main" : "grey.300",
+                      backgroundColor: isSubmitted
+                        ? "#e8f5e9"            // Đã nộp
+                        : isOverdue
+                        ? "#ffebee"             // Quá hạn
+                        : result.isInProgress
+                        ? "#fff8e1"             // Đang trong hạn
+                        : "white",               // Chưa đến kỳ
+                      borderRadius: 3,
+                      transition: "all 0.3s ease",
+                      boxShadow: isSelected ? 4 : 1,
+                      "&:hover": {
+                        boxShadow: 6,
+                        transform: "translateY(-3px)",
+                      },
+                      cursor: "pointer",
+                    }}
+                  >
+                    <CardContent sx={{ textAlign: "center" }}>
+                      {/* ========== CHECKBOX CHỌN ITEM ========== */}
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={isSelected}
+                            onChange={() => handleSelect(key)}
+                            onClick={(e) => e.stopPropagation()}
+                            color="primary"
+                            disabled={
+                              isSubmitted
+                                ? true                     // không chọn khi đã nộp
+                                : !(result.isInProgress || isOverdue)
+                            }
+                          />
+                        }
+                        label={
+                          <Typography
+                            variant="subtitle1"
+                            fontWeight="bold"
+                            sx={{ textAlign: "center" }}
+                          >
+                            📝 {reportName}
+                          </Typography>
+                        }
+                        sx={{ justifyContent: "center", width: "100%" }}
+                      />
 
-              // ====== 2️⃣ BÁO CÁO THÁNG ======
-              if (item.id_loaibaocao === 2) {
-                const m = item.customMonth || getMonthIn;
-                const y = item.customYear || dayjs().year();
+                      <Divider sx={{ my: 1 }} />
 
-                const label =
-                  m === 3 ? "Quý 1" :
-                  m === 6 ? "6 Tháng" :
-                  m === 9 ? "9 Tháng" :
-                  `Tháng ${m}`;
-
-                return `${base} - ${label} (${y})`;
-              }
-
-              // ====== 3️⃣ BÁO CÁO QUÝ ======
-              if (item.id_loaibaocao === 3 && item.quarter) {
-                return `${base} - ${
-                  item.quarter === 1
-                    ? "Quý I"
-                    : item.quarter === 2
-                    ? "Quý II - Báo cáo 06 tháng"
-                    : item.quarter === 3
-                    ? "Quý III - Báo cáo 09 tháng"
-                    : "Quý IV - Báo cáo Năm lần 2"
-                }`;
-              }
-
-              // ====== 4️⃣ BÁO CÁO NĂM ======
-              if (item.id_loaibaocao === 4 && item.quarter) {
-                return `${base} - Lần ${item.quarter}`;
-              }
-
-              return base;
-            })();
-
-            // =============================
-            // TẠO TEXT TRẠNG THÁI HIỂN THỊ
-            // =============================
-            let statusText, statusColor;
-
-            if (isSubmitted) {
-              statusText = "✅ Đã nộp";
-              statusColor = "success.main";
-            } else if (isOverdue) {
-              statusText = "🔴 Đã quá hạn";
-              statusColor = "error.main";
-            } else if (result.isInProgress) {
-              statusText = "🟡 Đang trong hạn nộp";
-              statusColor = "warning.main";
-            } else {
-              statusText = "🟢 Chưa đến kỳ";
-              statusColor = "success.main";
-            }
-            return (
-              <Grid item xs={12} sm={6} md={4} key={key}>
-                <Card
-                  onClick={() => {
-                    if (!isSubmitted) handleSelect(key);
-                  }}
-                  variant="outlined"
-                  sx={{
-                    height: "100%",
-                    borderColor: isSelected ? "primary.main" : "grey.300",
-                    backgroundColor: isSubmitted
-                      ? "#e8f5e9"            // Đã nộp
-                      : isOverdue
-                      ? "#ffebee"             // Quá hạn
-                      : result.isInProgress
-                      ? "#fff8e1"             // Đang trong hạn
-                      : "white",               // Chưa đến kỳ
-                    borderRadius: 3,
-                    transition: "all 0.3s ease",
-                    boxShadow: isSelected ? 4 : 1,
-                    "&:hover": {
-                      boxShadow: 6,
-                      transform: "translateY(-3px)",
-                    },
-                    cursor: "pointer",
-                  }}
-                >
-                  <CardContent sx={{ textAlign: "center" }}>
-                    {/* ========== CHECKBOX CHỌN ITEM ========== */}
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={isSelected}
-                          onChange={() => handleSelect(key)}
-                          onClick={(e) => e.stopPropagation()}
-                          color="primary"
-                          disabled={
-                            isSubmitted
-                              ? true                     // không chọn khi đã nộp
-                              : !(result.isInProgress || isOverdue)
-                          }
-                        />
-                      }
-                      label={
-                        <Typography
-                          variant="subtitle1"
-                          fontWeight="bold"
-                          sx={{ textAlign: "center" }}
-                        >
-                          📝 {reportName}
-                        </Typography>
-                      }
-                      sx={{ justifyContent: "center", width: "100%" }}
-                    />
-
-                    <Divider sx={{ my: 1 }} />
-
-                    {/* ========== TRẠNG THÁI ========== */}
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: statusColor,
-                        fontWeight: 600,
-                        mb: 1,
-                      }}
-                    >
-                      {statusText}
-                    </Typography>
-
-                    {/* ========== NGÀY BẮT ĐẦU ========== */}
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                      ⏰ <b>Ngày bắt đầu:</b> {result.nextNotifyDate}
-                    </Typography>
-
-                    {/* ========== DEADLINE ========== */}
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>
-                      ⏳ <b>Hạn nộp:</b> {result.deadlineTime}
-                    </Typography>
-
-                    {/* ========== COUNTDOWN ========== */}
-                    {!isSubmitted && (
-                      <Typography variant="body2" sx={{ mt: 1 }}>
-                        {result.isInProgress
-                          ? "Còn lại:"
-                          : isOverdue
-                          ? "Đã quá hạn:"
-                          : "Bắt đầu sau:"}{" "}
-                        <b>{result.countdown}</b>
+                      {/* ========== TRẠNG THÁI ========== */}
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: statusColor,
+                          fontWeight: 600,
+                          mb: 1,
+                        }}
+                      >
+                        {statusText}
                       </Typography>
-                    )}
-                  </CardContent>
-                </Card>
-              </Grid>
-            );
-          })}
-        </Grid>
+
+                      {/* ========== NGÀY BẮT ĐẦU ========== */}
+                      <Typography variant="body2" sx={{ mb: 0.5 }}>
+                        ⏰ <b>Ngày bắt đầu:</b> {result.nextNotifyDate}
+                      </Typography>
+
+                      {/* ========== DEADLINE ========== */}
+                      <Typography variant="body2" sx={{ mb: 0.5 }}>
+                        ⏳ <b>Hạn nộp:</b> {result.deadlineTime}
+                      </Typography>
+
+                      {/* ========== COUNTDOWN ========== */}
+                      {!isSubmitted && (
+                        <Typography variant="body2" sx={{ mt: 1 }}>
+                          {result.isInProgress
+                            ? "Còn lại:"
+                            : isOverdue
+                            ? "Đã quá hạn:"
+                            : "Bắt đầu sau:"}{" "}
+                          <b>{result.countdown}</b>
+                        </Typography>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Grid>
+              );
+            })}
+          </Grid>
+        </Box>
       )}
     </Box>
   );

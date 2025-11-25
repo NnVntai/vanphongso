@@ -194,117 +194,105 @@ const handleAddBelow = (index) => {
           </Box>
       )}
         <div className="p-4 mx-auto space-y-4 bg-white">
-          <div className="overflow-x-auto rounded-2xl shadow">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-              <tr>
-                <th className="px-3 py-2 text-left text-sm font-medium">STT</th>
-                <th className="px-3 py-2 text-left text-sm font-medium">Mã chỉ tiêu</th>
-                <th className="px-3 py-2 text-left text-sm font-medium">Tên chỉ tiêu</th>
-                <th className="px-3 py-2 text-left text-sm font-medium">Đơn vị</th>
-                <th className="px-3 py-2 text-center text-sm font-medium w-[100px]">Cho phép nhập</th>
-                <th className="px-3 py-2 text-center text-sm font-medium w-[100px]">Hiện báo cáo</th>
-                <th className="px-3 py-2 text-center text-sm font-medium w-[250px]">Nút chức năng</th>
-                <th className="px-3 py-2 text-sm font-medium text-center w-[250px]" colSpan={3}>Hành động</th>
-              </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-              <AnimatePresence initial={false}>
-                  {rows.map((row, idx) => (
-                      <motion.tr
-                          key={row.id ?? `new-${idx}`}
-                          exit={{ opacity: 0, y: -10 }}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.1 }}
-                          className="bg-white hover:bg-gray-50 border-b border-gray-100 text-[13px]"
-                      >
-                          {/* STT */}
-                          <td className="px-1 py-0.5 text-center w-10">{idx + 1}</td>
-                          {/* Mã chỉ tiêu */}
-                          <td className="px-1 py-0.5 w-[90px]">
-                              <input
-                                  type="text"
-                                  className="w-full border border-gray-200 rounded px-1 py-[2px] text-[13px] focus:ring-1 focus:ring-blue-300 focus:outline-none"
-                                  value={row.ma_chitieu}
-                                  onChange={(e) => handleChange(idx, "ma_chitieu", e.target.value)}
-                              />
-                          </td>
-                          {/* Tên chỉ tiêu */}
-                          <td className="px-1 py-0.5 min-w-[150px]">
-                              <input
-                                  type="text"
-                                  className="w-full border border-gray-200 rounded px-1 py-[2px] text-[13px] focus:ring-1 focus:ring-blue-300 focus:outline-none"
-                                  value={row.ten_chitieu}
-                                  onChange={(e) => handleChange(idx, "ten_chitieu", e.target.value)}
-                              />
-                          </td>
-                          {/* ĐVT */}
-                          <td className="px-1 py-0.5 w-[70px]">
-                              <input
-                                  type="text"
-                                  className="w-full border border-gray-200 rounded px-1 py-[2px] text-[13px] focus:ring-1 focus:ring-blue-300 focus:outline-none"
-                                  value={row.dvt}
-                                  onChange={(e) => handleChange(idx, "dvt", e.target.value)}
-                              />
-                          </td>
-                          <td className="px-1 py-0.5 w-[70px]">
-                             {row.is_active?"Nhập":"Không nhập"}
-                          </td>
-                          <td className="px-1 py-0.5 w-[70px]">
-                             {row.is_week?"Báo cáo tuần":"Tất cả"}
-                          </td>
-                          <td className="px-1 py-0.5 text-center w-[100px]">
-                              <button
-                                  onClick={() => handleOpen(row,idx)}
-                                  className={`p-1 mx-1 rounded text-xs font-medium transition-all
-                                         ${selectedRow?.id === row.id
-                                      ? "bg-blue-600 text-white"              // ✅ đang chọn
-                                      : "bg-blue-50 text-blue-600 hover:bg-blue-100" // 🌈 mặc định + hover
-                                  }`}
-                              >
-                                  <Info size={14} className="inline-block mr-1" />
-                                  Chi tiết
-                              </button>
-                              <button
-                                  onClick={() => handleAddBelow(idx)}
-                                  className="p-1 bg-blue-50 mx-1 hover:bg-blue-100 text-blue-600 rounded text-xs"
-                              >
-                                  + Thêm dòng dưới
-                              </button>
-                          </td>
+           <div className="overflow-x-auto rounded-2xl shadow">
+            <table className="min-w-full border-collapse">
 
-                          {/* Hành động */}
-                          <td className="px-1 py-1  text-center w-[100px]">
-                              <div className="flex justify-center gap-0.5">
-                                  <button
-                                      onClick={() => moveRow(idx, -1)}
-                                      className="p-1 hover:bg-gray-200 rounded disabled:opacity-30 w-[25px]"
-                                      disabled={idx === 0}
-                                      title="Lên"
-                                  >
-                                      <ArrowUp size={13} />
-                                  </button>
-                                  <button
-                                      onClick={() => moveRow(idx, 1)}
-                                      className="p-1 hover:bg-gray-200 rounded disabled:opacity-30 w-[25px]"
-                                      disabled={idx === rows.length - 1}
-                                      title="Xuống"
-                                  >
-                                      <ArrowDown size={13} />
-                                  </button>
-                                  <button
-                                      onClick={() => handleDelete(idx)}
-                                      className="p-1 hover:bg-red-100 rounded text-red-600 w-[25px]"
-                                      title="Xóa"
-                                  >
-                                      <Trash2 size={13} />
-                                  </button>
-                              </div>
-                          </td>
-                      </motion.tr>
+              {/* HEADER GIỮ NGUYÊN */}
+              <thead className="bg-gray-50 sticky top-0 z-10">
+                <tr className="table w-full table-fixed">
+                  <th className="px-3 py-2 text-left text-sm font-medium w-[50px]">STT</th>
+                  <th className="px-3 py-2 text-left text-sm font-medium w-[120px]">Mã chỉ tiêu</th>
+                  <th className="px-3 py-2 text-left text-sm font-medium w-[180px]">Tên chỉ tiêu</th>
+                  <th className="px-3 py-2 text-left text-sm font-medium w-[80px]">Đơn vị</th>
+                  <th className="px-3 py-2 text-center text-sm font-medium w-[100px]">Cho phép nhập</th>
+                  <th className="px-3 py-2 text-center text-sm font-medium w-[100px]">Hiện báo cáo</th>
+                  <th className="px-3 py-2 text-center text-sm font-medium w-[250px]">Nút chức năng</th>
+                  <th className="px-3 py-2 text-center text-sm font-medium w-[200px]">Hành động</th>
+                </tr>
+              </thead>
+
+              {/* T BODY CUỘN ĐƯỢC */}
+              <tbody className="block max-h-[420px] overflow-y-auto divide-y divide-gray-200">
+
+                <AnimatePresence initial={false}>
+                  {rows.map((row, idx) => (
+                    <motion.tr
+                      key={row.id ?? `new-${idx}`}
+                      exit={{ opacity: 0, y: -10 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.1 }}
+                      className="table w-full table-fixed bg-white hover:bg-gray-50 text-[13px]"
+                    >
+                      <td className="px-1 py-0.5 text-center w-[50px]">{idx + 1}</td>
+
+                      <td className="px-1 py-0.5 w-[120px]">
+                        <input
+                          type="text"
+                          className="w-full border border-gray-200 rounded px-1 py-[2px]"
+                          value={row.ma_chitieu}
+                          onChange={(e) => handleChange(idx, 'ma_chitieu', e.target.value)}
+                        />
+                      </td>
+
+                      <td className="px-1 py-0.5 w-[180px]">
+                        <input
+                          type="text"
+                          className="w-full border border-gray-200 rounded px-1 py-[2px]"
+                          value={row.ten_chitieu}
+                          onChange={(e) => handleChange(idx, 'ten_chitieu', e.target.value)}
+                        />
+                      </td>
+
+                      <td className="px-1 py-0.5 w-[80px]">
+                        <input
+                          type="text"
+                          className="w-full border border-gray-200 rounded px-1 py-[2px]"
+                          value={row.dvt}
+                          onChange={(e) => handleChange(idx, 'dvt', e.target.value)}
+                        />
+                      </td>
+
+                      <td className="px-1 py-0.5 w-[100px] text-center">
+                        {row.is_active ? "Nhập" : "Không nhập"}
+                      </td>
+
+                      <td className="px-1 py-0.5 w-[100px] text-center">
+                        {row.is_week ? "Báo cáo tuần" : "Tất cả"}
+                      </td>
+
+                      <td className="px-1 py-0.5 w-[250px] text-center">
+                        <button
+                          onClick={() => handleOpen(row, idx)}
+                          className={`p-1 mx-1 rounded text-xs font-medium ${
+                            selectedRow?.id === row.id
+                              ? "bg-blue-600 text-white"
+                              : "bg-blue-50 text-blue-600 hover:bg-blue-100"
+                          }`}
+                        >
+                          Chi tiết
+                        </button>
+                        <button
+                          onClick={() => handleAddBelow(idx)}
+                          className="p-1 bg-blue-50 mx-1 hover:bg-blue-100 text-blue-600 rounded text-xs"
+                        >
+                          + Dòng dưới
+                        </button>
+                      </td>
+
+                      <td className="px-1 py-1 text-center w-[200px]">
+                        <div className="flex justify-center gap-0.5">
+                          <button onClick={() => moveRow(idx, -1)} className="p-1 hover:bg-gray-200 rounded">↑</button>
+                          <button onClick={() => moveRow(idx, 1)} className="p-1 hover:bg-gray-200 rounded">↓</button>
+                          <button onClick={() => handleDelete(idx)} className="p-1 hover:bg-red-100 text-red-600 rounded">
+                            Xóa
+                          </button>
+                        </div>
+                      </td>
+                    </motion.tr>
                   ))}
-              </AnimatePresence>
+                </AnimatePresence>
+
               </tbody>
             </table>
           </div>

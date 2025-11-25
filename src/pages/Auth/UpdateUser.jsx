@@ -132,7 +132,7 @@ export default function UpdateUserInfo() {
                   fullWidth
                   required
                   label="Số điện thoại"
-                  value={"0"+form.phone}
+                  value={form.phone}
                   onChange={(e) => handleChange("phone", e.target.value)}
                 />
               </Grid>
