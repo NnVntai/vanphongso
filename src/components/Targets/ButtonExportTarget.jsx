@@ -117,8 +117,8 @@ const MainPage = ({ loaibaocaoId, year, month, quarter, week, number }) => {
               const sheetConfigs = [
                 { name: "Công thức năm, tháng, quý", formulaTitle: "Công thức năm, tháng, quý" },
                 { name: "Công thức tuần", formulaTitle: "Công thức tuần" },
-                { name: "Công thức thức kế hoạch năm, tháng, quý", formulaTitle: "Công thức thức kế hoạch năm, tháng, quý" },
-                { name: "Công thức thức kế hoạch tuần", formulaTitle: "Công thức thức kế hoạch tuần" },
+                { name: "Công thức kế hoạch năm, tháng, quý", formulaTitle: "Công thức kế hoạch năm, tháng, quý" },
+                { name: "Công thức kế hoạch tuần", formulaTitle: "Công thức kế hoạch tuần" },
             ]; 
             const workbook = new ExcelJS.Workbook();
     
