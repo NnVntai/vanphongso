@@ -6,8 +6,8 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const api = axios.create({
   // baseURL: 'http://123.25.238.108:8092/api',
-  baseURL: 'http://localhost:8081/api',
-  // baseURL: 'https://tknn.ttcntnmt.com.vn/api',
+  // baseURL: 'http://localhost:8081/api',
+  baseURL: 'https://tknn.ttcntnmt.com.vn/api',
 });
 
 // Interceptor request để check token
